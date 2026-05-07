@@ -1,0 +1,2856 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulador de Examen – Técnica y Electrónica Radioaficionados</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0f172a;
+    color: #e2e8f0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+
+  .screen { display: none; width: 100%; max-width: 720px; }
+  .screen.active { display: block; }
+
+  /* ── START SCREEN ── */
+  #screen-start { text-align: center; }
+
+  .logo {
+    font-size: 64px;
+    margin-bottom: 16px;
+    animation: float 3s ease-in-out infinite;
+  }
+  @keyframes float {
+    0%,100% { transform: translateY(0); }
+    50%      { transform: translateY(-8px); }
+  }
+
+  #screen-start h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #fbbf24;
+    margin-bottom: 8px;
+  }
+  #screen-start p {
+    color: #94a3b8;
+    margin-bottom: 32px;
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  .stats-box {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    padding: 20px 32px;
+    display: inline-flex;
+    gap: 48px;
+    margin-bottom: 32px;
+  }
+  .stat { text-align: center; }
+  .stat .num { font-size: 2rem; font-weight: 700; color: #3b82f6; }
+  .stat .label { font-size: 0.8rem; color: #64748b; margin-top: 2px; }
+
+  /* ── QUIZ SCREEN ── */
+  .progress-bar-wrap {
+    background: #1e293b;
+    border-radius: 99px;
+    height: 8px;
+    margin-bottom: 8px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+    border-radius: 99px;
+    transition: width 0.4s ease;
+  }
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: #64748b;
+    margin-bottom: 20px;
+  }
+
+  .question-card {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 16px;
+  }
+
+  .question-number {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #3b82f6;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+  }
+
+  .question-text {
+    font-size: 1.05rem;
+    line-height: 1.65;
+    color: #f1f5f9;
+    margin-bottom: 24px;
+  }
+
+  .options { display: flex; flex-direction: column; gap: 10px; }
+
+  .option-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    border: 2px solid #334155;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    line-height: 1.5;
+  }
+  .option-label:hover { border-color: #3b82f6; background: #1e3a5f22; }
+  .option-label input[type=radio] { display: none; }
+
+  .option-label.selected {
+    border-color: #3b82f6;
+    background: #1e3a5f44;
+  }
+  .option-label.correct {
+    border-color: #22c55e;
+    background: #14532d33;
+    color: #86efac;
+  }
+  .option-label.incorrect {
+    border-color: #ef4444;
+    background: #7f1d1d33;
+    color: #fca5a5;
+  }
+  .option-label.show-correct {
+    border-color: #22c55e;
+    background: #14532d33;
+    color: #86efac;
+  }
+
+  .option-letter {
+    min-width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #334155;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 0px;
+  }
+  .option-label.selected .option-letter { background: #3b82f6; }
+  .option-label.correct .option-letter  { background: #22c55e; color: #fff; }
+  .option-label.incorrect .option-letter{ background: #ef4444; color: #fff; }
+  .option-label.show-correct .option-letter { background: #22c55e; color: #fff; }
+
+  /* Hint */
+  .hint-wrap { margin-bottom: 16px; }
+  #btn-hint {
+    background: none;
+    border: 1px solid #f59e0b;
+    color: #f59e0b;
+    padding: 7px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+  }
+  #btn-hint:hover { background: #f59e0b22; }
+  #hint-text {
+    display: none;
+    margin-top: 10px;
+    padding: 12px 16px;
+    background: #1c1a0f;
+    border: 1px solid #f59e0b55;
+    border-radius: 8px;
+    color: #fde68a;
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  /* Feedback */
+  #feedback-box {
+    display: none;
+    margin-bottom: 16px;
+    padding: 16px;
+    border-radius: 10px;
+    font-size: 0.92rem;
+    line-height: 1.6;
+  }
+  #feedback-box.correct-fb {
+    background: #14532d33;
+    border: 1px solid #22c55e55;
+    color: #86efac;
+  }
+  #feedback-box.incorrect-fb {
+    background: #7f1d1d33;
+    border: 1px solid #ef444455;
+    color: #fca5a5;
+  }
+  .fb-title { font-weight: 700; font-size: 1rem; margin-bottom: 6px; }
+
+  /* Buttons */
+  .btn-row { display: flex; gap: 12px; flex-wrap: wrap; }
+
+  .btn-confirm {
+    flex: 1;
+    padding: 14px 24px;
+    background: #3b82f6;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    min-width: 140px;
+  }
+  .btn-confirm:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  .btn-confirm:not(:disabled):hover { background: #2563eb; transform: translateY(-1px); }
+
+  .btn-next {
+    flex: 1;
+    padding: 14px 24px;
+    background: linear-gradient(135deg, #7c3aed, #4f46e5);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: none;
+    min-width: 140px;
+  }
+  .btn-next:hover { opacity: 0.9; transform: translateY(-1px); }
+
+  .btn-start, .btn-restart {
+    padding: 16px 48px;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.5px;
+  }
+  .btn-start:hover, .btn-restart:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 8px 25px #3b82f644; }
+
+  /* ── RESULT SCREEN ── */
+  #screen-result { text-align: center; }
+  .result-score {
+    font-size: 5rem;
+    font-weight: 800;
+    color: #fbbf24;
+    line-height: 1;
+    margin: 16px 0;
+  }
+  .result-label { color: #94a3b8; font-size: 1rem; margin-bottom: 24px; }
+
+  .result-breakdown {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    margin-bottom: 32px;
+  }
+  .rb-item { text-align: center; }
+  .rb-num { font-size: 2rem; font-weight: 700; }
+  .rb-num.ok { color: #22c55e; }
+  .rb-num.fail { color: #ef4444; }
+  .rb-label { font-size: 0.8rem; color: #64748b; }
+
+  .result-msg {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    padding: 16px 24px;
+    color: #94a3b8;
+    font-size: 0.95rem;
+    margin-bottom: 28px;
+    line-height: 1.6;
+  }
+
+  /* ── GOLDEN DOG OVERLAY ── */
+  #overlay-dog {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.88);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    text-align: center;
+    padding: 32px;
+  }
+  #overlay-dog.hidden { display: none; }
+
+  .dog-emoji {
+    font-size: 140px;
+    animation: dogBounce 0.6s ease-in-out infinite alternate;
+    filter: drop-shadow(0 0 40px #fbbf24);
+    line-height: 1;
+    margin-bottom: 24px;
+  }
+  @keyframes dogBounce {
+    from { transform: translateY(0) scale(1); }
+    to   { transform: translateY(-20px) scale(1.05); }
+  }
+
+  .congrats-title {
+    font-size: 2.8rem;
+    font-weight: 800;
+    color: #fbbf24;
+    text-shadow: 0 0 30px #fbbf2488;
+    margin-bottom: 12px;
+  }
+  .congrats-sub {
+    font-size: 1.15rem;
+    color: #fde68a;
+    margin-bottom: 36px;
+  }
+
+  .confetti-wrap {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 99;
+  }
+  .confetti-piece {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    top: -20px;
+    animation: fall linear infinite;
+  }
+  @keyframes fall {
+    to { transform: translateY(110vh) rotate(720deg); opacity: 0.2; }
+  }
+
+  /* ── REVIEW SECTION ── */
+  .review-section {
+    margin-top: 32px;
+    text-align: left;
+  }
+  .review-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #f87171;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .review-item {
+    background: #1e293b;
+    border: 1px solid #ef444433;
+    border-left: 4px solid #ef4444;
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin-bottom: 12px;
+  }
+  .review-num {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #ef4444;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+  }
+  .review-q-text {
+    font-size: 0.95rem;
+    color: #e2e8f0;
+    line-height: 1.5;
+    margin-bottom: 10px;
+  }
+  .review-your {
+    font-size: 0.85rem;
+    color: #fca5a5;
+    margin-bottom: 4px;
+  }
+  .review-correct {
+    font-size: 0.85rem;
+    color: #86efac;
+    margin-bottom: 8px;
+  }
+  .review-explanation {
+    font-size: 0.85rem;
+    color: #94a3b8;
+    line-height: 1.5;
+    padding-top: 8px;
+    border-top: 1px solid #334155;
+  }
+
+  /* ── MODE SELECTION CARDS ── */
+  .mode-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 28px;
+    text-align: left;
+  }
+  .mode-card {
+    background: #1e293b;
+    border: 2px solid #334155;
+    border-radius: 16px;
+    padding: 18px 22px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .mode-card:hover { border-color: #3b82f6; background: #1e3a5f33; transform: translateY(-2px); }
+  .mode-card-featured { border-color: #f59e0b; background: #1c1a0f; }
+  .mode-card-featured:hover { border-color: #fbbf24; background: #1c1a0f66; }
+  .mode-card-info { flex: 1; }
+  .mode-icon { font-size: 2.2rem; flex-shrink: 0; }
+  .mode-title { font-size: 1.05rem; font-weight: 700; color: #f1f5f9; margin-bottom: 3px; }
+  .mode-desc { font-size: 0.82rem; color: #94a3b8; line-height: 1.4; }
+  .mode-badge { font-size: 0.7rem; color: #64748b; margin-top: 4px; }
+  .mode-card-featured .mode-title { color: #fbbf24; }
+  .mode-card-featured .mode-badge { color: #f59e0b; }
+
+  /* ── CATEGORY TAG (complete mode) ── */
+  .category-tag {
+    display: inline-block;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 99px;
+    margin-bottom: 6px;
+  }
+  .category-tag.tecnica  { background: #1e3a5f; color: #60a5fa; border: 1px solid #3b82f655; }
+  .category-tag.reglam   { background: #1a2a1a; color: #4ade80; border: 1px solid #22c55e55; }
+
+  /* ── CATEGORY BREAKDOWN (result screen) ── */
+  .cat-breakdown {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .cat-item { background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 10px 20px; text-align: center; }
+  .cat-label { font-size: 0.72rem; color: #64748b; margin-bottom: 4px; }
+  .cat-score { font-size: 1.3rem; font-weight: 700; }
+  .cat-score.tecnica { color: #60a5fa; }
+  .cat-score.reglam  { color: #4ade80; }
+
+  /* Responsive */
+  @media (max-width: 480px) {
+    .question-card { padding: 20px 16px; }
+    .congrats-title { font-size: 2rem; }
+    .dog-emoji { font-size: 100px; }
+    .mode-icon { font-size: 1.8rem; }
+  }
+  @media (min-width: 560px) {
+    .mode-cards { flex-direction: row; }
+    .mode-card { flex-direction: column; align-items: flex-start; flex: 1; }
+    .mode-icon { font-size: 2.5rem; margin-bottom: 6px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════ START SCREEN ══════════ -->
+<div id="screen-start" class="screen active">
+  <div class="logo">📡</div>
+  <h1>Simulador de Examen</h1>
+  <p>Radioaficionados Argentina · Ingreso a Categoría Novicio<br>
+  <span style="color:#64748b;font-size:0.9rem">Banco oficial ENACOM – Res. 3635 · Elegí un modo</span></p>
+
+  <div class="mode-cards">
+    <div class="mode-card" onclick="selectMode('tecnica')">
+      <div class="mode-icon">🔧</div>
+      <div class="mode-card-info">
+        <div class="mode-title">Solo Técnica</div>
+        <div class="mode-desc">15 preguntas aleatorias<br>Técnica y Electrónica</div>
+        <div class="mode-badge">150 preguntas en banco</div>
+      </div>
+    </div>
+    <div class="mode-card" onclick="selectMode('reglam')">
+      <div class="mode-icon">📋</div>
+      <div class="mode-card-info">
+        <div class="mode-title">Solo Reglamentación</div>
+        <div class="mode-desc">15 preguntas aleatorias<br>Reglamento ENACOM / IARP</div>
+        <div class="mode-badge">82 preguntas en banco</div>
+      </div>
+    </div>
+    <div class="mode-card mode-card-featured" onclick="selectMode('completo')">
+      <div class="mode-icon">🎓</div>
+      <div class="mode-card-info">
+        <div class="mode-title">Examen Completo</div>
+        <div class="mode-desc">30 preguntas (15 + 15)<br>Técnica + Reglamentación</div>
+        <div class="mode-badge">⭐ Simulación examen real</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ QUIZ SCREEN ══════════ -->
+<div id="screen-quiz" class="screen">
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-fill" id="progress-bar" style="width:0%"></div>
+  </div>
+  <div class="progress-label">
+    <span id="progress-text">Pregunta 1 de 15</span>
+    <span id="score-text">✓ 0 | ✗ 0</span>
+  </div>
+
+  <div class="question-card">
+    <div class="question-number" id="q-number">Pregunta 1</div>
+    <div class="question-text" id="q-text"></div>
+
+    <div class="options" id="q-options"></div>
+  </div>
+
+  <div class="hint-wrap">
+    <button id="btn-hint" onclick="toggleHint()">💡 Ver Pista</button>
+    <div id="hint-text"></div>
+  </div>
+
+  <div id="feedback-box"></div>
+
+  <div class="btn-row">
+    <button class="btn-confirm" id="btn-confirm" onclick="confirmAnswer()" disabled>Confirmar Respuesta</button>
+    <button class="btn-next" id="btn-next" onclick="nextQuestion()">Siguiente →</button>
+  </div>
+</div>
+
+<!-- ══════════ RESULT SCREEN ══════════ -->
+<div id="screen-result" class="screen">
+  <div style="font-size:48px;margin-bottom:8px">🏁</div>
+  <h2 style="color:#f1f5f9;font-size:1.5rem;margin-bottom:4px">Examen Finalizado</h2>
+  <div class="result-score" id="result-score">0/15</div>
+  <div class="result-label" id="result-pct"></div>
+  <div class="result-breakdown">
+    <div class="rb-item"><div class="rb-num ok" id="res-ok">0</div><div class="rb-label">Correctas</div></div>
+    <div class="rb-item"><div class="rb-num fail" id="res-fail">0</div><div class="rb-label">Incorrectas</div></div>
+  </div>
+  <div id="cat-breakdown" class="cat-breakdown" style="display:none"></div>
+  <div class="result-msg" id="result-msg"></div>
+  <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+    <button class="btn-restart" onclick="show('screen-start')">🏠 Elegir Modo</button>
+    <button class="btn-restart" onclick="startExam()" style="background:linear-gradient(135deg,#059669,#047857)">🔄 Repetir Modo</button>
+  </div>
+  <div id="review-section" class="review-section"></div>
+</div>
+
+<!-- ══════════ GOLDEN DOG OVERLAY ══════════ -->
+<div id="overlay-dog" class="hidden">
+  <div class="confetti-wrap" id="confetti-wrap"></div>
+  <div class="dog-emoji">🐕</div>
+  <div class="congrats-title">¡PERFECTO!</div>
+  <div class="congrats-sub" id="congrats-sub">¡Sos un genio! 🥇<br>¡El perrito dorado es tuyo!</div>
+  <button class="btn-restart" onclick="closeOverlay()" style="margin-top:8px">🏠 Elegir otro modo</button>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+//  BANCO DE PREGUNTAS – 150 preguntas de Técnica y Electrónica
+// ═══════════════════════════════════════════════════════════════
+const QUESTIONS = [
+  {
+    id:1,
+    text:'¿Con qué elemento bloqueamos el paso de una corriente continua entre dos puntos de un circuito?',
+    a:'Resistor.',b:'Inductor.',c:'Capacitor.',d:'Termistor.',
+    answer:'c',
+    hint:'Pensá en el componente que almacena energía en un campo eléctrico y presenta impedancia infinita a la CC en estado estacionario.',
+    explanation:'El CAPACITOR actúa como circuito abierto para corriente continua (CC) en estado estacionario: bloquea su paso, pero deja pasar la corriente alterna (CA).'
+  },
+  {
+    id:2,
+    text:'¿Cuál es el cable coaxil menos recomendado para VHF y UHF por sus mayores pérdidas?',
+    a:'RG-58.',b:'RG-8.',c:'RG-213.',d:'RG-11.',
+    answer:'a',
+    hint:'El diámetro del cable afecta directamente las pérdidas: a mayor diámetro, menores pérdidas a altas frecuencias.',
+    explanation:'El RG-58 es el más delgado de los listados, por lo que presenta las mayores pérdidas en VHF/UHF. Para esas bandas se prefieren cables más gruesos como el RG-8 o RG-213.'
+  },
+  {
+    id:3,
+    text:'Una resistencia está identificada con los siguientes colores: Rojo – Naranja – Rojo. ¿Qué valor tiene?',
+    a:'670 KΩ.',b:'230 Ω.',c:'2,3 KΩ.',d:'23 KΩ.',
+    answer:'c',
+    hint:'Código de colores: Rojo=2, Naranja=3, Rojo=multiplicador ×100. El resultado está en Ohmios.',
+    explanation:'Rojo(2) – Naranja(3) – Rojo(×100) = 23 × 100 = 2300 Ω = 2,3 KΩ.'
+  },
+  {
+    id:4,
+    text:'La banda de color dorado que se encuentra en un resistor, ¿qué tolerancia indica?',
+    a:'5 %.',b:'10 %.',c:'20 %.',d:'30 %.',
+    answer:'a',
+    hint:'El dorado y la plata son las dos tolerancias más comunes; el dorado es la más precisa de ambas.',
+    explanation:'La banda de color dorado en un resistor indica una tolerancia de ±5%. La banda plateada indica ±10%.'
+  },
+  {
+    id:5,
+    text:'¿En qué unidad se mide la inductancia de una bobina?',
+    a:'Faradio.',b:'Joulio.',c:'Henrio.',d:'Coulombio.',
+    answer:'c',
+    hint:'La unidad lleva el nombre del físico Joseph Henry, quien estudió la inducción electromagnética.',
+    explanation:'La inductancia se mide en Henrios (H), en honor a Joseph Henry. El Faradio es para capacitancia.'
+  },
+  {
+    id:6,
+    text:'Enuncie la ley de Ohm:',
+    a:'La intensidad es inversamente proporcional al cuadrado de la diferencia de potencial y directamente proporcional a su resistencia.',
+    b:'La intensidad es directamente proporcional a la diferencia de potencial e inversamente proporcional a su resistencia.',
+    c:'La intensidad es directamente proporcional a su resistencia e inversamente proporcional a la diferencia de potencial.',
+    d:'La intensidad es directamente proporcional a su resistencia y directamente proporcional a la diferencia de potencial.',
+    answer:'b',
+    hint:'Recordá la fórmula: I = V / R. La corriente sube si sube el voltaje, baja si sube la resistencia.',
+    explanation:'Ley de Ohm: I = V/R. La intensidad (I) es directamente proporcional a la tensión (V) e inversamente proporcional a la resistencia (R).'
+  },
+  {
+    id:7,
+    text:'¿Cuál es la unidad de medida de la intensidad de corriente?',
+    a:'Voltio.',b:'Amperio.',c:'Vatio.',d:'Henrio.',
+    answer:'b',
+    hint:'La unidad lleva el nombre del físico André-Marie Ampère.',
+    explanation:'La intensidad de corriente eléctrica se mide en Amperios (A), en honor a André-Marie Ampère.'
+  },
+  {
+    id:8,
+    text:'¿Cuál es la unidad de medida de la tensión?',
+    a:'Voltio.',b:'Amperio.',c:'Vatio.',d:'Henrio.',
+    answer:'a',
+    hint:'La unidad lleva el nombre de Alessandro Volta, inventor de la pila eléctrica.',
+    explanation:'La tensión (diferencia de potencial) se mide en Voltios (V), en honor a Alessandro Volta.'
+  },
+  {
+    id:9,
+    text:'Tenemos un circuito con 3 resistencias en serie de 10 Ω cada una, conectadas a una fuente de 30 V. ¿Qué valor de intensidad de corriente circula por el circuito?',
+    a:'10 Amperio.',b:'100 Amperio.',c:'1 Amperio.',d:'0,1 Amperio.',
+    answer:'c',
+    hint:'En serie la resistencia total es la suma. Luego aplicá I = V / R_total.',
+    explanation:'R_total = 10+10+10 = 30 Ω. I = V/R = 30/30 = 1 A.'
+  },
+  {
+    id:10,
+    text:'¿Con qué instrumento se mide la tensión en un circuito eléctrico y cómo se conecta?',
+    a:'Amperímetro. Se conecta en serie.',b:'Voltímetro. Se conecta en serie.',c:'Voltímetro. Se conecta en paralelo.',d:'Amperímetro. Se conecta en paralelo.',
+    answer:'c',
+    hint:'Para medir diferencia de potencial el instrumento va en los dos puntos entre los que queremos medir (en paralelo).',
+    explanation:'El voltímetro mide tensión y se conecta siempre en PARALELO con el componente a medir, para no alterar el circuito.'
+  },
+  {
+    id:11,
+    text:'¿Con qué instrumento se mide la intensidad de corriente en un circuito eléctrico y cómo se conecta?',
+    a:'Voltímetro. Se conecta en serie.',b:'Amperímetro. Se conecta en paralelo.',c:'Amperímetro. Se conecta en serie.',d:'Amperímetro. Se conecta en paralelo.',
+    answer:'c',
+    hint:'Para medir corriente, el instrumento debe estar en el mismo camino que recorre la corriente.',
+    explanation:'El amperímetro mide intensidad de corriente y se conecta siempre en SERIE, para que toda la corriente del circuito pase por él.'
+  },
+  {
+    id:12,
+    text:'¿Cuál es la unidad de medida de la potencia eléctrica?',
+    a:'Amperio.',b:'Voltio.',c:'Vatio.',d:'Henrio.',
+    answer:'c',
+    hint:'P = V × I. La unidad lleva el nombre del inventor de la máquina de vapor, James Watt.',
+    explanation:'La potencia eléctrica se mide en Vatios (W), en honor a James Watt. P = V × I = I² × R = V²/R.'
+  },
+  {
+    id:13,
+    text:'¿Qué potencia se producirá en una resistencia de 400 Ω, si la tensión aplicada es de 20 V?',
+    a:'10 Vatio.',b:'100 Vatio.',c:'1 Vatio.',d:'20 Vatio.',
+    answer:'c',
+    hint:'Usá la fórmula P = V² / R.',
+    explanation:'P = V²/R = 20²/400 = 400/400 = 1 W.'
+  },
+  {
+    id:14,
+    text:'Se conectan en paralelo tres capacitores de 22, 33 y 5 microfaradios respectivamente. ¿Cuál es la capacidad total?',
+    a:'3 µF.',b:'60 µF.',c:'45 µF.',d:'70 µF.',
+    answer:'b',
+    hint:'Los capacitores en PARALELO suman sus capacidades (al revés que las resistencias en paralelo).',
+    explanation:'C_total = 22 + 33 + 5 = 60 µF. Los capacitores en paralelo suman directamente sus valores.'
+  },
+  {
+    id:15,
+    text:'¿Qué tipo de antena puede ser una buena elección como parte de un equipo portable de HF para instalar en caso de emergencia?',
+    a:'Quad de 3 elementos.',b:'Yagi de 3 elementos.',c:'Dipolo de 1/2 longitud de onda.',d:'Helicoidal.',
+    answer:'c',
+    hint:'Pensá en la antena más simple, liviana y fácil de desplegar en cualquier lugar sin herramientas.',
+    explanation:'El dipolo de ½ onda es ideal para emergencias: es simple, liviano, no necesita estructura compleja y funciona bien en todas las bandas de HF.'
+  },
+  {
+    id:16,
+    text:'¿Cuál es el ángulo ideal entre ramas de una antena dipolo tipo "V" invertida?',
+    a:'135°.',b:'45°.',c:'90°.',d:'180°.',
+    answer:'c',
+    hint:'El ángulo de 90° da una impedancia muy cercana a 50 Ω, perfecta para conectar coaxil directamente.',
+    explanation:'El ángulo de 90° entre las ramas de la "V" invertida reduce la impedancia de ~73 Ω (dipolo plano) a ~50 Ω, coincidiendo con la impedancia estándar de los transceptores.'
+  },
+  {
+    id:17,
+    text:'En un receptor, el demodulador:',
+    a:'Produce una señal eléctrica oscilatoria de amplitud y frecuencia fija denominada portadora.',
+    b:'Extrae el mensaje a partir de la señal modulada.',
+    c:'Modifica la amplitud o la frecuencia de la portadora pura conforme a la señal del mensaje.',
+    d:'Amplifica la señal modulada.',
+    answer:'b',
+    hint:'De-modular = deshacer la modulación → recuperar la información original.',
+    explanation:'El demodulador (detector) realiza la operación inversa al modulador: extrae (recupera) el mensaje original a partir de la señal modulada recibida.'
+  },
+  {
+    id:18,
+    text:'¿Qué elemento de los señalados permite elevar por sí solo una tensión alterna?',
+    a:'Resistencia.',b:'Transformador.',c:'Diodo.',d:'Impedancia.',
+    answer:'b',
+    hint:'Funciona gracias a la inducción electromagnética entre dos bobinas acopladas magnéticamente.',
+    explanation:'El TRANSFORMADOR usa la inducción electromagnética para elevar (o reducir) tensiones alternas según la relación de espiras N2/N1 entre secundario y primario.'
+  },
+  {
+    id:19,
+    text:'En un transmisor, el modulador:',
+    a:'Amplifica la señal proveniente de la antena para que su nivel sea mayor al del ruido interno.',
+    b:'Produce una señal eléctrica oscilatoria de amplitud y frecuencia fija denominada portadora.',
+    c:'Modifica la amplitud o frecuencia de la portadora pura conforme a la señal del mensaje.',
+    d:'Amplifica la señal modulada para enviarla a la antena.',
+    answer:'c',
+    hint:'El modulador "imprime" la información de audio sobre la portadora modificando alguno de sus parámetros.',
+    explanation:'El MODULADOR modifica la amplitud (AM) o la frecuencia (FM) de la portadora según la señal de audio del micrófono, imprimiendo la información en la onda portadora.'
+  },
+  {
+    id:20,
+    text:'El valor máximo de una corriente alterna es de 200 mA. ¿Cuál es su valor eficaz?',
+    a:'130 mA.',b:'141,1 mA.',c:'158 mA.',d:'282,8 mA.',
+    answer:'b',
+    hint:'El valor eficaz (RMS) de una senoidal = valor máximo dividido por √2 ≈ 1,4142.',
+    explanation:'I_eficaz = I_max / √2 = 200 / 1,4142 ≈ 141,4 mA ≈ 141,1 mA.'
+  },
+  {
+    id:21,
+    text:'Para proteger un equipo de 220 V y 1 KW de consumo, ¿qué valor de fusible sería conveniente instalar?',
+    a:'500 mA.',b:'1 A.',c:'3 A.',d:'6 A.',
+    answer:'d',
+    hint:'Calculá la corriente de consumo con I = P/V, luego elegí el fusible inmediatamente superior con margen de seguridad.',
+    explanation:'I = 1000/220 ≈ 4,5 A. Se elige el fusible estándar inmediatamente superior con margen: 6 A. Un fusible de 3 A se quemaría con la corriente normal.'
+  },
+  {
+    id:22,
+    text:'En un capacitor, ¿qué fenómeno se produce entre la tensión y la corriente?',
+    a:'La tensión adelanta a la corriente.',b:'La corriente adelanta a la tensión.',c:'La tensión y la corriente están en fase.',d:'La corriente está desfasada 360°.',
+    answer:'b',
+    hint:'Recordá el nemónico ICE: en el Capacitor (C), la corriente (I) va antes que la tensión (E).',
+    explanation:'En un capacitor ideal la corriente ADELANTA a la tensión 90°. El capacitor primero se carga (corriente) y luego tiene tensión establecida.'
+  },
+  {
+    id:23,
+    text:'¿Cuándo existe resonancia en un circuito?',
+    a:'Cuando la reactancia capacitiva es igual a la corriente eléctrica.',
+    b:'Cuando la reactancia inductiva es igual a la tensión aplicada.',
+    c:'Cuando la reactancia capacitiva es igual a la reactancia inductiva.',
+    d:'Cuando la reactancia inductiva es igual a la corriente eléctrica.',
+    answer:'c',
+    hint:'En resonancia, los efectos del capacitor y el inductor se cancelan mutuamente.',
+    explanation:'La resonancia ocurre cuando Xc = XL. Las reactancias inductiva y capacitiva se cancelan, dejando solo la resistencia en el circuito → máxima corriente (serie) o mínima (paralelo).'
+  },
+  {
+    id:24,
+    text:'¿Cómo se denomina el material que separa las placas de un capacitor?',
+    a:'Conductor.',b:'Dieléctrico.',c:'Cátodo.',d:'Ánodo.',
+    answer:'b',
+    hint:'Es un material aislante cuya permitividad determina la capacidad del capacitor.',
+    explanation:'El DIELÉCTRICO es el material aislante interpuesto entre las placas del capacitor. Su permitividad eléctrica (εr) determina la capacidad del componente.'
+  },
+  {
+    id:25,
+    text:'¿Los diodos comunes permiten circulación de corriente en ambas direcciones?',
+    a:'No.',b:'Sí.',c:'Solo en fuentes de alimentación.',d:'Solo los diodos Zener.',
+    answer:'a',
+    hint:'El diodo tiene un ánodo y un cátodo: la corriente convencional solo fluye del ánodo al cátodo.',
+    explanation:'Los diodos comunes solo conducen corriente en una dirección (ánodo → cátodo). Bloquean la corriente inversa. Es su función principal como rectificadores.'
+  },
+  {
+    id:26,
+    text:'¿De qué elemento se compone un puente rectificador?',
+    a:'Capacitores.',b:'Diodos.',c:'FETs.',d:'Bobinas.',
+    answer:'b',
+    hint:'El puente rectificador tiene 4 elementos activos de conmutación dispuestos en forma de diamante.',
+    explanation:'Un puente rectificador (puente de Graetz) utiliza 4 DIODOS dispuestos para convertir corriente alterna en corriente continua pulsante, aprovechando ambos semiciclos de la CA.'
+  },
+  {
+    id:27,
+    text:'¿Qué elementos indispensables componen un transformador?',
+    a:'Dos capacitores.',b:'Un capacitor y una bobina.',c:'Dos bobinas.',d:'Una bobina y un diodo.',
+    answer:'c',
+    hint:'El transformador funciona por inducción mutua entre dos devanados sobre un núcleo magnético.',
+    explanation:'Un transformador se compone de DOS BOBINAS (primario y secundario) acopladas magnéticamente a través de un núcleo de material ferromagnético. No hay contacto eléctrico entre ellas.'
+  },
+  {
+    id:28,
+    text:'¿Qué elementos indispensables componen una fuente de alimentación típica de 12 V CC para una estación de radioaficionado?',
+    a:'Transformador, Capacitor, regulador y fusible.',
+    b:'Puente de diodos, Regulador, capacitor y fusible.',
+    c:'Transformador, puente de diodos, capacitor, regulador y fusible.',
+    d:'Transformador, resistencias, capacitor y fusible.',
+    answer:'c',
+    hint:'Seguí la cadena: baja la tensión CA → rectifica → filtra → regula → protege.',
+    explanation:'Fuente completa: Transformador (220V CA → ~18V CA) → Puente de diodos (rectifica) → Capacitor (filtra) → Regulador (estabiliza a 12V CC) → Fusible (protege).'
+  },
+  {
+    id:29,
+    text:'¿Qué tipo de corriente entrega una fuente de alimentación típica usada en transceptores?',
+    a:'Pulsante.',b:'Continua.',c:'Alterna.',d:'Monofásica.',
+    answer:'b',
+    hint:'Los transceptores funcionan como equipos electrónicos que requieren una tensión estable y sin variaciones.',
+    explanation:'La fuente de alimentación entrega corriente CONTINUA (CC) regulada y estabilizada. La etapa reguladora elimina las variaciones para que los circuitos funcionen correctamente.'
+  },
+  {
+    id:30,
+    text:'¿Cuál es una de las funciones más importantes que realiza un transistor?',
+    a:'Amplificar señales débiles.',b:'Rectificar la tensión de línea.',c:'Regula la frecuencia del oscilador.',d:'Atenuar señales débiles.',
+    answer:'a',
+    hint:'El transistor fue inventado para reemplazar a las válvulas termoiónicas en la amplificación.',
+    explanation:'La función más importante del transistor es AMPLIFICAR señales débiles. Una pequeña corriente o tensión en la base controla una corriente mucho mayor en el colector.'
+  },
+  {
+    id:31,
+    text:'¿Cómo se denominan los elementos que conforman un transistor BJT?',
+    a:'Ánodo, emisor y grilla.',b:'Placa, pantalla y base.',c:'Colector, base y emisor.',d:'Colector, base y cátodo.',
+    answer:'c',
+    hint:'Recordá el nemónico: CBE (Cola de Burro Empujada, o simplemente C-B-E).',
+    explanation:'Un transistor bipolar de juntura (BJT) tiene tres terminales: COLECTOR, BASE y EMISOR. La base controla el flujo de corriente entre colector y emisor.'
+  },
+  {
+    id:32,
+    text:'Tres capacitores de 6 nF son conectados en serie. ¿Qué capacidad presenta el conjunto?',
+    a:'1,0 nF.',b:'2,0 nF.',c:'6,0 nF.',d:'18 nF.',
+    answer:'b',
+    hint:'Capacitores en SERIE: 1/Ct = 1/C1 + 1/C2 + 1/C3. Es lo contrario a las resistencias en serie.',
+    explanation:'1/Ct = 1/6 + 1/6 + 1/6 = 3/6 = 0,5 → Ct = 2 nF. En serie, la capacidad equivalente siempre es menor que la menor.'
+  },
+  {
+    id:33,
+    text:'El primario de un transformador tiene 60 espiras, el secundario 300 espiras. Si aplicamos al primario 12 V CA, ¿qué tensión tendremos en el secundario?',
+    a:'40 V.',b:'50 V.',c:'60 V.',d:'70 V.',
+    answer:'d',
+    hint:'Usá la relación de transformación: V2/V1 = N2/N1.',
+    explanation:'Según la clave oficial: respuesta D (70 V). Nota: la fórmula V2=V1×N2/N1=12×300/60=60 V daría la opción C, pero la respuesta oficial del banco de preguntas es D.'
+  },
+  {
+    id:34,
+    text:'Se desea utilizar en la banda de 80m una antena dipolo de ½ onda alimentada en su centro. Se midió ROE: en 3500 kHz ROE=1,1; en 3600 kHz ROE=2; en 3700 kHz ROE=3; en 3750 kHz ROE=4. ¿Qué debemos hacer?',
+    a:'Alargarla.',b:'Acortarla.',c:'Aumentar la impedancia del coaxil.',d:'Inclinarla.',
+    answer:'b',
+    hint:'El ROE mínimo indica la frecuencia de resonancia. ¿En qué extremo de la banda está ese mínimo?',
+    explanation:'El ROE mínimo está en 3500 kHz (extremo inferior), indicando que la antena es demasiado larga para las frecuencias superiores. Hay que ACORTARLA para subir la frecuencia de resonancia hacia el centro de la banda.'
+  },
+  {
+    id:35,
+    text:'Las señales emitidas en la banda de 80 m:',
+    a:'No llegan a refractarse y escapan de la atmósfera.',
+    b:'Se absorben en la capa ionosférica "D" durante el mediodía.',
+    c:'Solo permiten comunicaciones seguras a más de 500 km debido a la zona de silencio.',
+    d:'Solo permiten comunicaciones seguras a más de 2000 km debido a la zona de silencio.',
+    answer:'b',
+    hint:'La capa D es la más baja de la ionosfera, activa solo de día y causada por la radiación solar.',
+    explanation:'Durante el mediodía, la radiación solar ioniza fuertemente la capa D, que absorbe las señales de 80m (3,5-4 MHz) antes de que lleguen a capas superiores. Por eso 80m funciona mejor de noche.'
+  },
+  {
+    id:36,
+    text:'Se dispone de cuatro resistencias (R1=50Ω, R2=10Ω, R3=120Ω y R4=4700Ω) conectadas en paralelo a una fuente de 12 V. ¿Cuál será la tensión aplicada sobre R4?',
+    a:'12 V.',b:'0,0025 V.',c:'47 V.',d:'6 V.',
+    answer:'a',
+    hint:'Recordá la propiedad fundamental del circuito paralelo respecto a la tensión.',
+    explanation:'En un circuito PARALELO la tensión es IGUAL en todas las ramas. Por lo tanto, sobre R4 (y sobre cualquier otra resistencia) la tensión es 12 V.'
+  },
+  {
+    id:37,
+    text:'Para obtener una buena relación de ROE, ¿qué es conveniente?',
+    a:'Alta potencia reflejada y baja potencia incidente.',
+    b:'Baja potencia reflejada y alta potencia incidente.',
+    c:'Alta potencia reflejada y alta potencia incidente.',
+    d:'Baja potencia reflejada y baja potencia incidente.',
+    answer:'b',
+    hint:'ROE ideal = 1:1 significa que toda la potencia llega a la antena sin reflexión.',
+    explanation:'Un ROE ideal indica que casi toda la potencia incidente llega a la antena (alta potencia incidente) y prácticamente nada se refleja de vuelta (baja potencia reflejada).'
+  },
+  {
+    id:38,
+    text:'Describir en bloque un receptor superheterodino en clase de emisión A3E:',
+    a:'Amp. RF, Mezclador, Oscilador de RF, Amp. FI, Amp. de Audio y parlante.',
+    b:'Amp. RF, Mezclador, Oscilador de RF, Amp. FI, Detector, Amp. de audio y parlante.',
+    c:'Amp. RF, Mezclador, Amp. FI, Detector, Amp. de audio y parlante.',
+    d:'Amp. RF, Detector de producto, Mezclador, Detector, Amp. de audio y parlante.',
+    answer:'b',
+    hint:'El receptor superheterodino necesita un detector (demodulador AM) y un oscilador local separado.',
+    explanation:'Receptor superheterodino A3E: Amp.RF → Mezclador + Oscilador Local → Amp.FI → Detector (demodulador AM) → Amp.AF → Parlante. El detector es indispensable para demodular la AM.'
+  },
+  {
+    id:39,
+    text:'Definición de selectividad:',
+    a:'El receptor tiene la capacidad de evitar las interferencias de estaciones potentes y cercanas a la frecuencia de trabajo.',
+    b:'El receptor tiene la capacidad de escuchar las señales muy débiles.',
+    c:'El receptor tiene la capacidad de escuchar las señales muy fuertes.',
+    d:'El receptor tiene la capacidad de bloquear las señales muy débiles.',
+    answer:'a',
+    hint:'Selectividad: SELECT = elegir (seleccionar solo la señal deseada y rechazar las demás).',
+    explanation:'SELECTIVIDAD es la capacidad del receptor de discriminar y aislar la señal deseada, rechazando señales de frecuencias adyacentes aunque sean potentes.'
+  },
+  {
+    id:40,
+    text:'Definición de sensibilidad:',
+    a:'El receptor tiene la capacidad de evitar las interferencias de estaciones potentes y cercanas a la frecuencia de trabajo.',
+    b:'El receptor tiene la capacidad de escuchar las señales muy débiles.',
+    c:'El receptor tiene la capacidad de escuchar las señales muy fuertes.',
+    d:'El receptor tiene la capacidad de bloquear las señales muy débiles.',
+    answer:'b',
+    hint:'Sensibilidad: SENSOR = detectar estímulos muy pequeños (señales muy débiles).',
+    explanation:'SENSIBILIDAD es la capacidad del receptor de detectar y amplificar señales de radiofrecuencia extremadamente débiles, expresada como el nivel mínimo de señal de entrada utilizable.'
+  },
+  {
+    id:41,
+    text:'Describir en bloque un receptor de F3E (FM):',
+    a:'Amp.RF, mezclador, filtro pasa bajos, Amp.FI, limitador, discriminador de frecuencia, Amp.audio y parlante.',
+    b:'Amp.RF, Mezclador, Oscilador de RF, Amp.FI, Detector, Amp.audio y parlante.',
+    c:'Amp.RF, Detector de producto, Mezclador, Detector, Amp.audio y parlante.',
+    d:'Amp.RF, Mezclador, Oscilador de RF, Filtro, Amp.FI, Limitador, Discriminador de frecuencia, Amp.audio y parlante.',
+    answer:'d',
+    hint:'El receptor FM necesita un limitador (elimina la AM espuria) y un discriminador de frecuencia (demodula FM).',
+    explanation:'Receptor F3E (FM): Amp.RF → Mezclador + OL → Filtro FI → Amp.FI → Limitador → Discriminador de frecuencia → Amp.AF → Parlante. El limitador y el discriminador son exclusivos del receptor FM.'
+  },
+  {
+    id:42,
+    text:'¿Para qué se emplea el amplificador de FI?',
+    a:'Para aumentar la ganancia de la primera etapa amplificadora de RF.',
+    b:'Para usarlo como discriminador de frecuencia.',
+    c:'Para obtener ganancia y selectividad.',
+    d:'Para aumentar la ganancia de la última etapa amplificadora de AF.',
+    answer:'c',
+    hint:'La FI (Frecuencia Intermedia) es fija, lo que facilita construir filtros muy selectivos y etapas de alta ganancia.',
+    explanation:'El amplificador de FI proporciona la mayor parte de la GANANCIA y la SELECTIVIDAD del receptor superheterodino. Su frecuencia fija permite filtros muy eficientes.'
+  },
+  {
+    id:43,
+    text:'¿Qué función cumple el mezclador en un receptor superheterodino?',
+    a:'Mezclar la frecuencia de la FI con la de la señal recibida.',
+    b:'Convertir la señal captada en otra señal de las mismas características pero de frecuencia distinta para que pueda ser filtrada y amplificada con mayor facilidad.',
+    c:'Convertir la señal captada en otra señal de características totalmente distintas a las dadas.',
+    d:'Ninguna es correcta.',
+    answer:'b',
+    hint:'El mezclador traslada la señal a una frecuencia fija (FI) donde es más fácil amplificarla y filtrarla.',
+    explanation:'El mezclador (convertidor de frecuencia) combina la señal recibida con el Oscilador Local para producir la Frecuencia Intermedia (FI) fija, manteniendo la información modulada pero cambiando la frecuencia portadora.'
+  },
+  {
+    id:44,
+    text:'Se dispone de cuatro resistencias (R1=50Ω, R2=10Ω, R3=120Ω y R4=4700Ω) conectadas en paralelo a una fuente de 12 V. ¿Cuál será la potencia disipada por la resistencia R1?',
+    a:'2,88 Vatios.',b:'1,44 Vatios.',c:'0,72 Vatios.',d:'0,36 Vatios.',
+    answer:'a',
+    hint:'En paralelo la tensión es igual para todas. Usá P = V²/R con la tensión de la fuente.',
+    explanation:'P = V²/R1 = 12²/50 = 144/50 = 2,88 W. Como están en paralelo, la tensión en R1 es 12 V.'
+  },
+  {
+    id:45,
+    text:'Defina en bloques un transmisor de Banda Lateral Única (J3E):',
+    a:'Oscilador de RF, Amp. de micrófono, filtro, mezclador, amplificador lineal.',
+    b:'Oscilador de RF, Modulador balanceado, Amp. de micrófono, filtro, mezclador, amplificador lineal.',
+    c:'Amp. de RF, Mezclador, Oscilador de RF, Filtro, Amp. de FI, Limitador, Discriminador de frecuencia, Amp. de audio y parlante.',
+    d:'Amp. de RF, Mezclador, Oscilador de RF, Amp. de FI, Detector, Amp. de audio y parlante.',
+    answer:'b',
+    hint:'El J3E (SSB) necesita un Modulador Balanceado para suprimir la portadora, y un filtro para seleccionar una sola banda lateral.',
+    explanation:'Transmisor J3E: OL → Modulador Balanceado (suprime portadora) ← Amp.Micrófono → Filtro (selecciona una BL) → Mezclador (traslada a frecuencia de trabajo) → Amp.Lineal → Antena.'
+  },
+  {
+    id:46,
+    text:'El ancho de banda ocupado por una emisión J3E aproximadamente es:',
+    a:'Aprox. 3 kHz.',b:'Aprox. 6 kHz.',c:'Aprox. 16 kHz.',d:'Aprox. 1,5 kHz.',
+    answer:'a',
+    hint:'J3E (SSB) = una sola banda lateral de voz. El ancho de banda de la voz es ≈ 3 kHz.',
+    explanation:'J3E (SSB) transmite solo una banda lateral de la señal de voz (300-3000 Hz), ocupando aproximadamente 3 kHz de ancho de banda. AM (A3E) ocupa el doble (≈6 kHz).'
+  },
+  {
+    id:47,
+    text:'El ancho de banda de una emisión de F3E banda angosta, habitual en la banda de 2 m, es:',
+    a:'Aprox. 6 kHz.',b:'Aprox. 16 kHz.',c:'Aprox. 25 kHz.',d:'Aprox. 3 kHz.',
+    answer:'b',
+    hint:'FM banda angosta (NBFM) usada en VHF tiene una desviación de ±5 kHz, lo que da un ancho de banda de 2×(5+3) kHz.',
+    explanation:'FM banda angosta en 2 m: desviación ±5 kHz, con audio hasta 3 kHz. Por la regla de Carson: BW ≈ 2×(Δf + f_audio) = 2×(5+3) = 16 kHz.'
+  },
+  {
+    id:48,
+    text:'En clase de emisión F3E:',
+    a:'La portadora varía su amplitud con la señal de micrófono.',
+    b:'La señal de micrófono hace variar la frecuencia de la portadora.',
+    c:'La portadora no varía de frecuencia, varían los armónicos.',
+    d:'Se transmite la portadora modulada en frecuencia con tres tonos.',
+    answer:'b',
+    hint:'F = Frequency modulation = modulación de FRECUENCIA.',
+    explanation:'En F3E (FM de voz), la amplitud de la portadora permanece CONSTANTE y lo que varía es su FRECUENCIA, proporcional a la señal de audio del micrófono.'
+  },
+  {
+    id:49,
+    text:'Disponemos de un transformador cuyo primario es alimentado con 220 V CA y tiene 1100 espiras. El secundario nos deberá suministrar 15 V CA. ¿Cuántas espiras deberá tener?',
+    a:'50 espiras.',b:'60 espiras.',c:'75 espiras.',d:'85 espiras.',
+    answer:'c',
+    hint:'Relación de transformación: N2/N1 = V2/V1. Despejá N2.',
+    explanation:'N2 = N1 × (V2/V1) = 1100 × (15/220) = 1100 × 0,0682 = 75 espiras.'
+  },
+  {
+    id:50,
+    text:'En clase de emisión A1A:',
+    a:'La portadora se modula con el micrófono.',
+    b:'Se transmite portadora al ritmo que marca el manipulador.',
+    c:'El manipulador corta la alimentación del amplificador lineal.',
+    d:'Se transmiten tres tonos para modular en amplitud la portadora.',
+    answer:'b',
+    hint:'A1A = Telegrafía CW (Continuous Wave) = código Morse.',
+    explanation:'A1A es la telegrafía CW (Onda Continua): se transmite portadora no modulada al ritmo del manipulador Morse. Las pulsaciones forman los puntos y rayas del código.'
+  },
+  {
+    id:51,
+    text:'En clase de emisión J3E:',
+    a:'La portadora es modulada por el audio proveniente del amplificador de RF.',
+    b:'La portadora es modulada por el audio proveniente del OFV.',
+    c:'La portadora es modulada por el audio proveniente del amplificador de micrófono.',
+    d:'La señal de micrófono hace variar la frecuencia de la portadora.',
+    answer:'c',
+    hint:'J3E es BLU (SSB): el audio del micrófono modula la portadora que luego se filtra para quedarse con una sola banda lateral.',
+    explanation:'En J3E (SSB), la señal de audio amplificada por el amplificador de micrófono modula la portadora en el modulador balanceado. Luego el filtro selecciona la banda lateral deseada.'
+  },
+  {
+    id:52,
+    text:'En clase de emisión A3E:',
+    a:'La portadora es modulada en fase.',
+    b:'La portadora es modulada en amplitud.',
+    c:'La portadora es modulada por los armónicos.',
+    d:'La señal de micrófono hace variar la frecuencia de la portadora.',
+    answer:'b',
+    hint:'A3E = AM (Amplitude Modulation) de voz. La "A" de A3E indica Amplitude.',
+    explanation:'A3E es AM (modulación en amplitud) de voz. La amplitud de la portadora varía proporcionalmente a la señal de audio del micrófono.'
+  },
+  {
+    id:53,
+    text:'¿Qué instrumento se utiliza para ver la forma de onda en un circuito eléctrico?',
+    a:'Amperímetro.',b:'Formametro.',c:'Osciloscopio.',d:'Ondámetro.',
+    answer:'c',
+    hint:'OSCILO = oscilación; SCOPIO = mirar. Muestra la señal en el tiempo.',
+    explanation:'El OSCILOSCOPIO visualiza la forma de onda de señales eléctricas en función del tiempo. Permite medir tensión, frecuencia, desfasaje y distorsión.'
+  },
+  {
+    id:54,
+    text:'¿Qué instrumento se utiliza para medir la potencia de un transmisor?',
+    a:'Amperímetro.',b:'Potenciómetro.',c:'Vatímetro.',d:'Medidor de ROE.',
+    answer:'c',
+    hint:'VATI = Vatio (unidad de potencia). El sufijo -metro = instrumento de medición.',
+    explanation:'El VATÍMETRO (wattmeter) mide la potencia de RF de un transmisor en Vatios. El medidor de ROE mide la relación de ondas estacionarias, no la potencia directamente.'
+  },
+  {
+    id:55,
+    text:'Para fonía, el ancho del mensaje transmitido es:',
+    a:'50 Hz.',b:'200 Hz.',c:'3.000 Hz.',d:'20 kHz.',
+    answer:'c',
+    hint:'La voz humana para comunicaciones de radio se filtra para ocupar solo la banda necesaria.',
+    explanation:'El ancho de banda estándar para voz en comunicaciones de radio es de 300 Hz a 3.000 Hz (≈3 kHz). Los 20 kHz son para audio de alta fidelidad (HiFi).'
+  },
+  {
+    id:56,
+    text:'¿Qué ventaja tiene una señal de BLU (SSB) con respecto a una señal AM?',
+    a:'No se pierde inteligibilidad para pequeños corrimientos en la sintonía.',
+    b:'La cantidad de sonido es superior.',
+    c:'La portadora ayuda a tener un mayor alcance.',
+    d:'El ancho de banda es la mitad y por lo tanto se hace un mejor aprovechamiento del espectro radioeléctrico.',
+    answer:'d',
+    hint:'AM ocupa portadora + 2 bandas laterales. SSB elimina la portadora y una banda lateral.',
+    explanation:'SSB (BLU) ocupa solo ~3 kHz vs ~6 kHz de AM. Esto reduce interferencias, aumenta la eficiencia espectral, y concentra toda la potencia en información útil (sin portadora ni segunda BL).'
+  },
+  {
+    id:57,
+    text:'¿Con qué instrumento se mide la frecuencia?',
+    a:'Amperímetro.',b:'Vatímetro.',c:'Frecuencímetro.',d:'Potenciómetro.',
+    answer:'c',
+    hint:'El instrumento lleva el nombre de lo que mide: FRECUENCIA + metro.',
+    explanation:'El FRECUENCÍMETRO (frequency counter) cuenta los ciclos por segundo de una señal eléctrica y muestra el resultado en Hz, kHz o MHz.'
+  },
+  {
+    id:58,
+    text:'El ancho de banda de una señal de BLU (SSB) es:',
+    a:'La mitad de la correspondiente al mensaje.',
+    b:'El doble de la correspondiente al mensaje.',
+    c:'Igual a la correspondiente del mensaje.',
+    d:'Igual al valor de la portadora.',
+    answer:'c',
+    hint:'SSB conserva una sola banda lateral intacta, cuyo ancho es exactamente el del audio que la generó.',
+    explanation:'El ancho de banda de SSB es IGUAL al ancho de banda del audio del mensaje (≈3 kHz). AM tiene el doble porque tiene dos bandas laterales. SSB elimina una BL y la portadora.'
+  },
+  {
+    id:59,
+    text:'Cuando se aplica una tensión de 150 V a un circuito, la corriente medida es de 2,5 A. ¿Cuál es la resistencia del circuito?',
+    a:'50 Ω.',b:'90 Ω.',c:'375 Ω.',d:'Ninguna es correcta.',
+    answer:'d',
+    hint:'Calculá R = V/I y compará el resultado con las opciones a, b y c.',
+    explanation:'R = V/I = 150/2,5 = 60 Ω. Como 60 Ω no aparece entre las opciones a, b ni c, la respuesta correcta es D: ninguna es correcta.'
+  },
+  {
+    id:60,
+    text:'¿Qué intensidad de corriente circula por una resistencia de 5000 Ω si se le aplica 250 V?',
+    a:'0,90 A.',b:'10 A.',c:'0,05 A.',d:'0,5 A.',
+    answer:'c',
+    hint:'I = V / R.',
+    explanation:'I = 250 / 5000 = 0,05 A.'
+  },
+  {
+    id:61,
+    text:'Si se conectan en paralelo una resistencia de 500 Ω con otra de 1200 Ω. ¿Cuál es la resistencia total del circuito?',
+    a:'353 Ω.',b:'500 Ω.',c:'700 Ω.',d:'1700 Ω.',
+    answer:'a',
+    hint:'Para dos resistencias en paralelo: Rt = (R1 × R2) / (R1 + R2).',
+    explanation:'Rt = (500 × 1200) / (500 + 1200) = 600.000 / 1700 ≈ 353 Ω. En paralelo, la resistencia total siempre es menor que la menor de las resistencias.'
+  },
+  {
+    id:62,
+    text:'La corriente que circula por una resistencia de 20 kΩ es de 150 mA. ¿Cuál es la caída de tensión que se provoca en ella?',
+    a:'2.500 V.',b:'3.000 V.',c:'1.500 V.',d:'13.333 V.',
+    answer:'b',
+    hint:'V = I × R. Recordá convertir mA a A y kΩ a Ω antes de operar.',
+    explanation:'V = 0,150 A × 20.000 Ω = 3.000 V.'
+  },
+  {
+    id:63,
+    text:'¿Qué elemento se utiliza para adaptar una antena dipolo con una línea de alimentación desbalanceada?',
+    a:'Transistor.',b:'Diodo.',c:'Balún.',d:'Transmatch.',
+    answer:'c',
+    hint:'BALÚN = BALanced-UNbalanced. Conecta un sistema balanceado con uno desbalanceado.',
+    explanation:'El BALÚN (BALanced-UNbalanced) transforma la línea desbalanceada del coaxil al sistema balanceado del dipolo, evitando corrientes de manto que degradan la radiación y el diagrama de la antena.'
+  },
+  {
+    id:64,
+    text:'Un dipolo de media onda, ¿cómo irradia?',
+    a:'En forma unidireccional.',b:'En forma omnidireccional.',c:'En forma bidireccional.',d:'En forma isotrópica.',
+    answer:'c',
+    hint:'El dipolo horizontal tiene dos lóbulos de radiación, uno a cada lado, perpendiculares a su eje.',
+    explanation:'El dipolo de ½ onda irradia en forma BIDIRECCIONAL: tiene dos lóbulos principales perpendiculares a su eje y dos nulos en la dirección de los extremos del dipolo.'
+  },
+  {
+    id:65,
+    text:'¿Cuántos elementos se necesitan (como mínimo) para construir una antena tipo Yagi?',
+    a:'1.',b:'2.',c:'3.',d:'4.',
+    answer:'b',
+    hint:'Una Yagi mínima tiene el elemento activo (excitado) más al menos UN elemento parasítico (director o reflector).',
+    explanation:'La Yagi mínima tiene 2 elementos: el excitado (dipolo activo) y un director o reflector (elemento parasítico). Con 2 elementos ya hay ganancia y directividad.'
+  },
+  {
+    id:66,
+    text:'¿Qué función cumple un oscilador?',
+    a:'Elimina alguna parte del contenido espectral de una señal obteniendo una nueva señal que es una aproximación de la original.',
+    b:'Decrementa la amplitud de una señal manteniendo su forma de onda.',
+    c:'Convierte una señal electromagnética en eléctrica.',
+    d:'Genera internamente señales eléctricas y tiene una salida pero ninguna entrada.',
+    answer:'d',
+    hint:'El oscilador no necesita señal de entrada de RF: solo necesita alimentación eléctrica.',
+    explanation:'El OSCILADOR genera señales eléctricas de frecuencia determinada de forma autónoma: tiene salida de señal pero ninguna entrada de RF. Solo requiere tensión de alimentación CC.'
+  },
+  {
+    id:67,
+    text:'¿Cuál es la longitud de onda correspondiente a una frecuencia de 3657 kHz?',
+    a:'154,46 m.',b:'94,57 m.',c:'82,03 m.',d:'75,01 m.',
+    answer:'c',
+    hint:'λ(m) = 300 / f(MHz).',
+    explanation:'λ = 300 / 3,657 ≈ 82,03 m.'
+  },
+  {
+    id:68,
+    text:'¿Cuál es la longitud de una antena dipolo de ½ onda para operar en 28.950 kHz?',
+    a:'5,34 m.',b:'6,23 m.',c:'4,9 m.',d:'9,84 m.',
+    answer:'c',
+    hint:'Longitud dipolo ½ onda (m) = 142,5 / f(MHz).',
+    explanation:'L = 142,5 / 28,950 ≈ 4,92 m ≈ 4,9 m. La constante 142,5 incluye el factor de acortamiento típico (~5%).'
+  },
+  {
+    id:69,
+    text:'¿Cuál es la longitud de una de las ramas del dipolo de ½ onda para la frecuencia de 7043 kHz?',
+    a:'10,11 m.',b:'9,23 m.',c:'12,56 m.',d:'20,22 m.',
+    answer:'a',
+    hint:'Longitud total del dipolo = 142,5/f(MHz). Una rama es la mitad del dipolo.',
+    explanation:'Dipolo total = 142,5 / 7,043 ≈ 20,23 m. Una rama = 20,23 / 2 ≈ 10,11 m.'
+  },
+  {
+    id:70,
+    text:'Un filtro:',
+    a:'Genera internamente señales eléctricas, tiene una salida pero ninguna entrada.',
+    b:'Decrementa la amplitud de una señal manteniendo su forma de onda.',
+    c:'Elimina alguna parte del contenido espectral de una señal, obteniéndose una nueva señal que es una aproximación de la original.',
+    d:'Convierte una señal electromagnética en eléctrica.',
+    answer:'c',
+    hint:'Filtrar = seleccionar algunas frecuencias y rechazar otras (como un filtro de café).',
+    explanation:'Un FILTRO elimina selectivamente componentes de frecuencia no deseadas de una señal, dejando pasar solo las frecuencias dentro de su banda de paso.'
+  },
+  {
+    id:71,
+    text:'Una antena vertical de ¼ de onda para la frecuencia de 146 MHz deberá tener una longitud aproximada de:',
+    a:'48,8 cm.',b:'24,4 cm.',c:'97,7 cm.',d:'2 mts.',
+    answer:'a',
+    hint:'Longitud ¼ de onda (m) = 71,25 / f(MHz).',
+    explanation:'L = 71,25 / 146 ≈ 0,488 m = 48,8 cm. La constante 71,25 incluye el factor de acortamiento típico para antenas verticales.'
+  },
+  {
+    id:72,
+    text:'¿Cómo irradia una antena vertical?',
+    a:'Unidireccionalmente.',b:'Omnidireccionalmente.',c:'Bidireccionalmente.',d:'Isotrópicamente.',
+    answer:'b',
+    hint:'Pensá en la forma del diagrama de radiación de un palo vertical: es igual en todas las direcciones horizontales.',
+    explanation:'La antena vertical irradia OMNIDIRECCIONALMENTE en el plano horizontal: tiene un patrón circular (igual en todas las direcciones horizontales), con el máximo de radiación en el horizonte.'
+  },
+  {
+    id:73,
+    text:'¿Cómo irradia una antena común tipo Yagi de 3 elementos?',
+    a:'Omnidireccionalmente.',b:'Direccionalmente.',c:'Isotrópicamente.',d:'Con polarización circular.',
+    answer:'b',
+    hint:'Los elementos parasíticos de la Yagi dirigen y concentran la energía en una dirección.',
+    explanation:'La Yagi irradia DIRECCIONALMENTE: concentra la energía en un lóbulo principal frontal. El reflector y los directores actúan como "espejos" que guían la energía en una dirección preferente.'
+  },
+  {
+    id:74,
+    text:'Una antena direccional de 3 elementos tipo Yagi, bien construida y optimizada para la banda de VHF. ¿Qué ganancia tiene (respecto a antena isotrópica)?',
+    a:'Aproximadamente de 3 a 5 dB.',b:'Aproximadamente de 6 a 8 dB.',c:'Aproximadamente de 8 a 10 dB.',d:'Aproximadamente de 9 a 11 dB.',
+    answer:'b',
+    hint:'La ganancia de una Yagi aumenta con la cantidad de elementos; 3 elementos dan ganancia moderada.',
+    explanation:'Una Yagi de 3 elementos bien construida y optimizada tiene aproximadamente 6 a 8 dBi de ganancia sobre una antena isotrópica (≈ 4 a 6 dBd sobre un dipolo).'
+  },
+  {
+    id:75,
+    text:'Un amplificador:',
+    a:'Incrementa la amplitud de una señal manteniendo su forma de onda.',
+    b:'Elimina alguna parte del contenido espectral de una señal obteniéndose una nueva señal que es una aproximación de la original.',
+    c:'Genera internamente señales eléctricas y tiene una salida pero ninguna entrada.',
+    d:'Convierte una señal eléctrica en electromagnética.',
+    answer:'a',
+    hint:'AMPLIAR = hacer más grande. El amplificador ideal no distorsiona, solo aumenta el nivel.',
+    explanation:'Un AMPLIFICADOR ideal incrementa la amplitud (nivel) de una señal manteniendo su forma de onda sin distorsión. La potencia de salida proviene de la fuente de alimentación, no de la señal de entrada.'
+  },
+  {
+    id:76,
+    text:'El cable coaxil RG-58U tiene una impedancia característica de:',
+    a:'50 Ω.',b:'75 Ω.',c:'300 Ω.',d:'600 Ω.',
+    answer:'a',
+    hint:'El RG-58 es el cable estándar de 50 Ω para radioafición. El RG-59 y RG-6 son de 75 Ω (TV cable).',
+    explanation:'El RG-58U tiene una impedancia característica de 50 Ω, que es el estándar en radioafición y telecomunicaciones de RF. El de 75 Ω (RG-59) se usa en TV por cable.'
+  },
+  {
+    id:77,
+    text:'Se desea enviar como mensaje un tono de 3 kHz en una señal de BLU banda inferior (BLI) cuya frecuencia portadora es 3.500 kHz. La frecuencia de la señal modulada estará dada por:',
+    a:'Una componente a 3.497 kHz, una a 3.500 kHz y una a 3.503 kHz.',
+    b:'Una componente a 3.497 kHz y una a 3.500 kHz.',
+    c:'Una componente a 3.497 kHz.',
+    d:'Una componente a 3.500 kHz.',
+    answer:'c',
+    hint:'BLI = Banda Lateral Inferior: solo se transmite la componente en f_portadora – f_audio. No hay portadora ni BLS.',
+    explanation:'BLI (LSB): se transmite solo la banda lateral inferior → f = 3.500 – 3 = 3.497 kHz. Se suprimen la portadora (3.500 kHz) y la banda lateral superior (3.503 kHz).'
+  },
+  {
+    id:78,
+    text:'El cable coaxil RG-8U y el RG-213U tienen una impedancia característica de:',
+    a:'Aproximadamente 50 Ω.',b:'Aproximadamente 75 Ω.',c:'Aproximadamente 300 Ω.',d:'Aproximadamente 600 Ω.',
+    answer:'a',
+    hint:'Son los cables "gruesos" de alta potencia estándar en radioafición, de la misma impedancia que el RG-58 pero con menos pérdidas.',
+    explanation:'El RG-8U y RG-213U son cables coaxiles de alta potencia con impedancia de ≈50 Ω. Su mayor diámetro les da menores pérdidas que el RG-58, ideal para potencias elevadas y largas distancias.'
+  },
+  {
+    id:79,
+    text:'Un transmisor en 146 MHz alimenta una línea coaxil RG-58U de 100 m y en el otro extremo se conecta una antena. ¿Qué se verifica?',
+    a:'La potencia que llega a la antena es igual a la que sale del transmisor.',
+    b:'La potencia que llega a la antena es menor que la que sale del transmisor.',
+    c:'La potencia que llega a la antena es mayor que la que sale del transmisor.',
+    d:'La potencia que llega a la antena es inversamente proporcional a la que sale del transmisor.',
+    answer:'b',
+    hint:'Ningún cable es perfectamente conductor: siempre hay pérdidas por resistencia y dieléctrico, especialmente en VHF.',
+    explanation:'El cable siempre tiene pérdidas (resistivas y dieléctricas) que aumentan con la frecuencia y la longitud. A 146 MHz y 100 m de RG-58, las pérdidas son significativas: la potencia en la antena SIEMPRE es MENOR.'
+  },
+  {
+    id:80,
+    text:'Cuando se recepcionan dos señales de BLU (SSB) que están en una misma frecuencia:',
+    a:'Se cancelan entre sí y se escucha solamente ruido.',
+    b:'Se interferirán y se escuchará un sonido inteligible.',
+    c:'Se escucharán las dos, de acuerdo a la intensidad que se reciben.',
+    d:'La que llegue con mayor intensidad tapará a la otra.',
+    answer:'c',
+    hint:'A diferencia de FM, SSB no tiene efecto de captura. Compará con recibir dos estaciones AM simultáneamente.',
+    explanation:'SSB no tiene "efecto de captura" como FM. Dos señales SSB en la misma frecuencia se superponen y se escuchan AMBAS simultáneamente, con mayor audibilidad la de mayor intensidad, pero sin tapado.'
+  },
+  {
+    id:81,
+    text:'¿Qué permite realizar el sintonizador de antena (transmatch)?',
+    a:'Amplificar la potencia.',b:'Adaptar impedancias entre transmisor y línea de alimentación.',c:'Adaptar impedancias entre línea de alimentación y antena.',d:'Enfasar dos antenas direccionales.',
+    answer:'b',
+    hint:'El transmatch está entre el transmisor y la línea. Su función es presentarle al transmisor la impedancia correcta (50 Ω).',
+    explanation:'El sintonizador de antena (Transmatch/ATU) adapta la impedancia entre el TRANSMISOR y la LÍNEA de alimentación, para que el transmisor vea 50 Ω en su salida y opere eficientemente con mínima ROE.'
+  },
+  {
+    id:82,
+    text:'¿A qué se le llama I.T.V.?',
+    a:'Interferencia de chispas de automotor.',b:'Interferencia a teléfonos.',c:'Interferencia a televisores.',d:'Interferencia total en VHF.',
+    answer:'c',
+    hint:'ITV: leé las siglas letra por letra. I = Interferencia, T = a..., V = ...',
+    explanation:'ITV significa Interferencia a TeleVisores. Es la interferencia causada por señales de radio (armónicos, intermodulación) que se acoplan a los receptores de TV.'
+  },
+  {
+    id:83,
+    text:'¿Qué antena tiene más ganancia en estaciones VHF móviles?',
+    a:'1/4 de onda.',b:'5/8 de onda.',c:'Cola de chancho (0 dB).',d:'1,5 dBi.',
+    answer:'b',
+    hint:'La antena 5/8 es más larga que la 1/4 y tiene su corriente de alimentación en un punto que favorece la radiación horizontal.',
+    explanation:'La antena de 5/8 de onda tiene mayor ganancia (≈3 dBi) que la de 1/4 de onda (0 dBi) en el plano horizontal, concentrando más energía hacia el horizonte, ideal para comunicaciones móviles.'
+  },
+  {
+    id:84,
+    text:'¿Cuál es habitualmente la impedancia de salida de los transceptores que se comercializan para uso de radioaficionados?',
+    a:'75 Ω.',b:'300 Ω.',c:'50 Ω.',d:'35 Ω.',
+    answer:'c',
+    hint:'Es el mismo valor que la impedancia de los cables coaxiles RG-58 y RG-213 más comunes.',
+    explanation:'Los transceptores modernos tienen impedancia estándar de salida de 50 Ω, que coincide con la impedancia de los cables coaxiles y antenas más comunes en radioafición.'
+  },
+  {
+    id:85,
+    text:'Si por error se selecciona la BLI (LSB) en BLU (SSB) para recibir una señal de banda superior (USB):',
+    a:'Se escuchará una señal con tonalidad más aguda.',b:'Se escuchará una señal ininteligible.',c:'Se podrá escuchar la señal sin dificultad.',d:'Se escuchará una señal con tonalidad más grave.',
+    answer:'b',
+    hint:'Usar la banda lateral incorrecta invierte el espectro de audio: las frecuencias altas van a donde deberían ir las bajas.',
+    explanation:'Al usar BLI para recibir una señal USB, el espectro de audio queda INVERTIDO (reversed). Los tonos agudos y graves se intercambian, produciendo una señal ININTELIGIBLE (como una voz al revés).'
+  },
+  {
+    id:86,
+    text:'¿Cuál es habitualmente la impedancia en el centro de una antena dipolo de ½ longitud de onda tipo "V" invertida con sus ramas a 90°?',
+    a:'75 Ω.',b:'52 Ω.',c:'35 Ω.',d:'125 Ω.',
+    answer:'b',
+    hint:'La "V" invertida baja la impedancia respecto al dipolo horizontal. El ángulo de 90° da un valor muy cercano a 50 Ω.',
+    explanation:'El dipolo "V" invertida a 90° tiene una impedancia de alimentación de ≈50-52 Ω, muy conveniente para conectar directamente al coaxil de 50 Ω sin necesidad de balún de impedancia.'
+  },
+  {
+    id:87,
+    text:'La frecuencia de trabajo de un transmisor es de 21.000 kHz. ¿Cuál es su frecuencia en MHz?',
+    a:'0,21 MHz.',b:'21 MHz.',c:'210 MHz.',d:'2,1 MHz.',
+    answer:'b',
+    hint:'1 MHz = 1000 kHz. Dividí por 1000.',
+    explanation:'21.000 kHz ÷ 1000 = 21 MHz. Esta es la banda de 15 metros de radioaficionados.'
+  },
+  {
+    id:88,
+    text:'Un resistor variable es llamado:',
+    a:'Potenciómetro.',b:'Capacitor.',c:'Termistor.',d:'Variac.',
+    answer:'a',
+    hint:'Es el componente que se usa como control de volumen en equipos de audio.',
+    explanation:'Un resistor variable de tres terminales se llama POTENCIÓMETRO (cuando se usa como divisor de tensión) o REÓSTATO (cuando se usa en serie, con dos terminales). El termistor varía con temperatura.'
+  },
+  {
+    id:89,
+    text:'En una antena direccional tipo Yagi de tres elementos, ¿cómo se denominan sus elementos?',
+    a:'Director, Balún, Excitado.',b:'Director, Excitado, Reflector.',c:'Director, Excitado, Pasivo.',d:'Director, Activo, Pasivo.',
+    answer:'b',
+    hint:'El reflector va detrás y es más largo; el excitado es el dipolo activo al centro; el director va adelante y es más corto.',
+    explanation:'La Yagi de 3 elementos tiene: REFLECTOR (atrás, más largo) + EXCITADO (centro, dipolo activo) + DIRECTOR (adelante, más corto). El reflector y el director son elementos parasíticos.'
+  },
+  {
+    id:90,
+    text:'¿Cuál es la fórmula aproximada de cálculo de una antena vertical de ¼ de longitud de onda?',
+    a:'142,5 / Frecuencia (MHz).',b:'72 / Frecuencia (MHz).',c:'142,5 / Velocidad de la luz.',d:'Frecuencia (MHz) / 72.',
+    answer:'b',
+    hint:'La constante para ¼ de onda es la mitad de la constante del dipolo (142,5/2 ≈ 71,25 ≈ 72).',
+    explanation:'Longitud ¼ onda (m) ≈ 72 / f(MHz) (o más exactamente 71,25/f). Para el dipolo completo (½ onda) la constante es 142,5/f(MHz).'
+  },
+  {
+    id:91,
+    text:'La propagación de las ondas de radio por reflexión ionosférica en bandas de HF está influida principalmente por:',
+    a:'El ciclo de manchas solares.',b:'La meteorología en el trayecto de la comunicación.',c:'Ninguna de las opciones a) o b).',d:'La posición planetaria.',
+    answer:'a',
+    hint:'El sol ioniza la ionosfera. Más actividad solar = más ionización = mejor propagación en algunas bandas.',
+    explanation:'La propagación ionosférica en HF depende principalmente del CICLO DE MANCHAS SOLARES (período ≈11 años). Las manchas solares generan radiación UV y X que ioniza las capas D, E y F de la ionosfera.'
+  },
+  {
+    id:92,
+    text:'¿A qué se denomina polarización de una onda?',
+    a:'Al componente de iones positivos y negativos de la misma.',b:'A que la misma llega a los polos.',c:'A la posición relativa (vertical u horizontal) de su campo electromagnético.',d:'A la polaridad (positiva o negativa) de la señal aplicada.',
+    answer:'c',
+    hint:'La polarización describe la orientación del campo eléctrico de la onda en el espacio.',
+    explanation:'La POLARIZACIÓN de una onda describe la orientación de su campo eléctrico: vertical (campo E vertical), horizontal (campo E horizontal), circular, etc. Depende de la orientación de la antena transmisora.'
+  },
+  {
+    id:93,
+    text:'La densidad, composición y altura de las capas ionosféricas:',
+    a:'Cambia con la luna y el estado meteorológico.',b:'Cambia con el ciclo solar, la época del año, la hora y la latitud del lugar.',c:'Es permanente y no cambia.',d:'Cambia en relación a la posición planetaria.',
+    answer:'b',
+    hint:'La ionosfera está viva: varía con el sol (ciclo, hora, estación) y la ubicación geográfica.',
+    explanation:'Las capas ionosféricas (D, E, F1, F2) varían continuamente según el ciclo solar (11 años), la estación del año, la hora del día (de día a de noche cambian drásticamente) y la latitud geográfica.'
+  },
+  {
+    id:94,
+    text:'La banda de 80 m ofrece razonables posibilidades de comunicarse con la Antártida:',
+    a:'En invierno y a la media noche.',b:'En cualquier época del año al mediodía.',c:'Las respuestas a) y b) son correctas.',d:'La banda de 80 m no ofrece ninguna posibilidad de comunicarse con la Antártida.',
+    answer:'a',
+    hint:'La capa D que absorbe 80 m se forma por radiación solar: ¿cuándo hay menos sol en ambos hemisferios?',
+    explanation:'En invierno y de noche la capa D se disuelve (sin radiación solar), reduciendo la absorción. La propagación NVIS de 80 m puede alcanzar la Antártida en esas condiciones de menor absorción.'
+  },
+  {
+    id:95,
+    text:'¿Qué ventajas ofrece el oscilador a cristal de cuarzo sobre otro con inductancia y condensador?',
+    a:'Que es un circuito más sencillo.',b:'Que el oscilador de cristal está libre de armónicos y el otro no.',c:'Que su estabilidad de frecuencia es mucho mayor.',d:'Que es más económico.',
+    answer:'c',
+    hint:'El cuarzo tiene una resonancia mecánica piezoeléctrica extremadamente estable y de alto factor Q.',
+    explanation:'El oscilador de cuarzo tiene una ESTABILIDAD DE FRECUENCIA mucho mayor que el LC, porque la frecuencia de resonancia del cristal de cuarzo varía muy poco con temperatura y tiempo.'
+  },
+  {
+    id:96,
+    text:'¿Cómo se propagan usualmente las señales de VHF?',
+    a:'Se curvan en la ionosfera.',b:'Se mueven en círculos.',c:'Viajan en línea recta.',d:'Viajan en ángulos rectos.',
+    answer:'c',
+    hint:'En VHF y UHF, la ionosfera ya no tiene efecto de reflexión. Las ondas son como "luz de radio".',
+    explanation:'Las señales VHF (y UHF) viajan en LÍNEA RECTA (propagación troposférica/óptica). No se refractan en la ionosfera. Por eso la cobertura es "de vista", limitada al horizonte óptico-radio.'
+  },
+  {
+    id:97,
+    text:'¿Cómo es la frecuencia de una armónica respecto a la frecuencia fundamental?',
+    a:'Es apenas algo más alta.',b:'Es apenas algo más baja.',c:'Es exactamente un múltiplo.',d:'Ninguna de las opciones indicadas.',
+    answer:'c',
+    hint:'2° armónica = 2× fundamental, 3° armónica = 3× fundamental, etc.',
+    explanation:'Una armónica tiene una frecuencia que es un MÚLTIPLO ENTERO EXACTO de la fundamental: 2ª armónica = 2×f₀, 3ª armónica = 3×f₀. No son "aproximadamente" múltiplos: son exactos.'
+  },
+  {
+    id:98,
+    text:'Si los extremos de un dipolo de media onda horizontal señalan al Este y al Oeste, ¿en qué dirección irradia la antena?',
+    a:'Fundamentalmente de Norte a Sur.',b:'Fundamentalmente de Este a Oeste.',c:'Fundamentalmente de arriba hacia abajo.',d:'En todas direcciones por ser omnidireccional.',
+    answer:'a',
+    hint:'El dipolo irradia perpendicular a su eje. Su eje va de E a O, entonces la radiación va en dirección...',
+    explanation:'El dipolo horizontal irradia en la dirección PERPENDICULAR a su eje. Si el eje apunta E-O, los lóbulos de radiación máxima apuntan N-S. Los nulos están en las puntas (E y O).'
+  },
+  {
+    id:99,
+    text:'¿Qué elemento se utiliza para irradiar energía?',
+    a:'Líneas de transmisión.',b:'Antena.',c:'Transmisores.',d:'Amplificadores de RF.',
+    answer:'b',
+    hint:'Es el componente que transforma energía eléctrica de RF en ondas electromagnéticas que se propagan en el espacio.',
+    explanation:'La ANTENA es el elemento transductor que convierte energía eléctrica de RF en ondas electromagnéticas (en transmisión) y viceversa (en recepción).'
+  },
+  {
+    id:100,
+    text:'Un transceptor es un equipo:',
+    a:'Transmisor específico.',b:'Que reúne las funciones de transmisor y receptor.',c:'Receptor específico.',d:'Receptor bibanda.',
+    answer:'b',
+    hint:'TRANSceiver = TRANSmitter + reCEIVER (en inglés). En español: TRANSceptor = TRANSmit + reCEPTOR.',
+    explanation:'Un TRANSCEPTOR integra en un solo equipo las funciones de TRANSMISOR y RECEPTOR, compartiendo componentes como la antena, el oscilador y el amplificador de RF.'
+  },
+  {
+    id:101,
+    text:'El PTT de un equipo es:',
+    a:'La etapa de transmisión.',b:'El interruptor que se debe presionar para recibir.',c:'El interruptor que se debe presionar para transmitir.',d:'La fuente de alimentación (Power To Transmitter).',
+    answer:'c',
+    hint:'PTT = Push To Talk = empujá para hablar (transmitir).',
+    explanation:'PTT (Push To Talk) es el pulsador que, al presionarse, conmuta el equipo del modo recepción al modo transmisión. Al soltarlo, vuelve a recibir.'
+  },
+  {
+    id:102,
+    text:'La antena puede ser desconectada del transmisor y operar en vacío:',
+    a:'Cuando se quiere hacer comunicados de corta distancia.',b:'Cuando el transmisor está en clase C.',c:'Nunca.',d:'Cuando se opera en VHF o UHF.',
+    answer:'c',
+    hint:'Sin carga, la energía de RF no tiene donde ir y la tensión en la salida puede ser muy alta.',
+    explanation:'NUNCA se debe operar un transmisor sin antena conectada. La energía reflejada puede generar tensiones peligrosas y destruir los transistores o el PA del transmisor.'
+  },
+  {
+    id:103,
+    text:'En un receptor, ¿qué etapa está inmediatamente después de la antena?',
+    a:'Mezclador.',b:'Amplificador de FI.',c:'Amplificador de RF.',d:'Amplificador de AF.',
+    answer:'c',
+    hint:'La primera etapa debe amplificar la débil señal captada por la antena antes de cualquier procesamiento.',
+    explanation:'La primera etapa de un receptor superheterodino es el AMPLIFICADOR DE RF, que amplifica la débil señal de la antena antes de convertirla a FI en el mezclador. Mejora la relación señal/ruido del sistema.'
+  },
+  {
+    id:104,
+    text:'En un transformador reductor, el número de vueltas del primario es:',
+    a:'Menor que el secundario.',b:'Mayor que el secundario.',c:'Igual que las del secundario.',d:'La mitad que las del secundario.',
+    answer:'b',
+    hint:'El transformador reductor baja la tensión. V2/V1 = N2/N1. Si V2 < V1, entonces N2 < N1.',
+    explanation:'En un transformador reductor V2 < V1, por lo que según V2/V1 = N2/N1, se cumple N2 < N1: el PRIMARIO tiene MAYOR número de espiras que el secundario.'
+  },
+  {
+    id:105,
+    text:'Una señal de BLS (USB) ubicada en los 3.750 kHz ocupa el sector de frecuencias comprendido entre:',
+    a:'3.747 y 3.750 kHz.',b:'3.750 y 3.753 kHz.',c:'3.747 y 3.753 kHz.',d:'3.748 y 3.752 kHz.',
+    answer:'b',
+    hint:'BLS = Banda Lateral Superior = frecuencias POR ARRIBA de la portadora. El audio ocupa ≈3 kHz.',
+    explanation:'BLS (USB) ocupa las frecuencias SUPERIORES a la portadora: de 3.750 kHz (portadora) hasta 3.750 + 3 = 3.753 kHz. BLI (LSB) estaría de 3.747 a 3.750 kHz.'
+  },
+  {
+    id:106,
+    text:'¿Qué ventaja tiene una señal de BLS (USB) con respecto a una señal BLI (LSB)?',
+    a:'No pierde inteligibilidad para pequeños corrimientos en la sintonía.',
+    b:'Tiene mucha mayor inmunidad al ruido.',
+    c:'No tiene ninguna ventaja ni desventaja, solo presentan diferencias técnicas en el transmisor y el receptor.',
+    d:'Es más fácil obtener el mensaje a partir de la señal modulada.',
+    answer:'c',
+    hint:'USB y LSB son simétricas respecto a la portadora suprimida. Son técnicamente equivalentes.',
+    explanation:'BLS (USB) y BLI (LSB) son técnicamente equivalentes: misma potencia, mismo ancho de banda, misma inteligibilidad. Las diferencias son solo en cuál banda lateral se selecciona (convención según banda).'
+  },
+  {
+    id:107,
+    text:'¿Qué significa la sigla ALC?',
+    a:'Control automático de nivel.',b:'Control anual de nivel.',c:'Control manual de audio.',d:'Amplificador lineal controlado.',
+    answer:'a',
+    hint:'ALC = Automatic Level Control. En español: control automático de nivel.',
+    explanation:'ALC (Automatic Level Control = Control Automático de Nivel) es un circuito que controla automáticamente el nivel de audio de entrada para prevenir la sobremodulación del transmisor.'
+  },
+  {
+    id:108,
+    text:'¿Qué relación existe entre la frecuencia y su correspondiente longitud de onda?',
+    a:'Son directamente proporcionales, al aumentar una la otra también aumenta.',
+    b:'Son inversamente proporcionales, al aumentar una la otra disminuye.',
+    c:'La frecuencia es directamente proporcional al cuadrado de la longitud de onda.',
+    d:'La frecuencia es directamente proporcional a la mitad de la longitud de onda.',
+    answer:'b',
+    hint:'λ = c/f. Si f sube (más ciclos por segundo), ¿qué pasa con la longitud de cada ciclo?',
+    explanation:'λ = c/f. Son INVERSAMENTE PROPORCIONALES: a mayor frecuencia, menor longitud de onda. Por eso las antenas de VHF/UHF son mucho más cortas que las de HF.'
+  },
+  {
+    id:109,
+    text:'¿Qué polarización se utiliza habitualmente para la comunicación por repetidoras en la banda de 2 m?',
+    a:'Circular.',b:'Vertical.',c:'Horizontal.',d:'Oblicua a 45°.',
+    answer:'b',
+    hint:'Las repetidoras usan antenas omnidireccionales para cubrir 360°. ¿Qué orientación usa una antena vertical omnidireccional?',
+    explanation:'Las repetidoras de VHF/UHF usan antenas verticales omnidireccionales (5/8 onda, colineales) que irradian con POLARIZACIÓN VERTICAL, la estándar para comunicaciones móviles y locales en esas bandas.'
+  },
+  {
+    id:110,
+    text:'¿Qué polarización de antena se utiliza habitualmente para la comunicación de dos estaciones en la banda de VHF y UHF para el modo Banda Lateral Única?',
+    a:'Circular.',b:'Vertical.',c:'Horizontal.',d:'Oblicua a 45°.',
+    answer:'c',
+    hint:'Para comunicaciones de largo alcance (DX) en VHF/UHF en SSB existe una convención internacional de polarización.',
+    explanation:'Para comunicaciones DX (larga distancia) en VHF/UHF usando SSB, la convención internacional es POLARIZACIÓN HORIZONTAL, usando antenas tipo Yagi horizontales para maximizar la ganancia directiva.'
+  },
+  {
+    id:111,
+    text:'¿Qué significa la sigla R.O.E.?',
+    a:'Relación de polarización Oblicua Espacial.',b:'Red Observadores Espaciales.',c:'Relación de Ondas Especiales.',d:'Relación de Ondas Estacionarias.',
+    answer:'d',
+    hint:'Las ondas estacionarias se forman por la superposición de ondas incidente y reflejada en una línea de transmisión.',
+    explanation:'ROE = Relación de Ondas Estacionarias (en inglés: SWR = Standing Wave Ratio). Indica la eficiencia de transferencia de potencia entre transmisor, línea y antena. ROE=1:1 es perfecta.'
+  },
+  {
+    id:112,
+    text:'¿Con qué instrumento medimos la R.O.E.?',
+    a:'Frecuencímetro.',b:'Amperímetro.',c:'Medidor de ondas estacionarias.',d:'Osciloscopio.',
+    answer:'c',
+    hint:'El instrumento lleva el nombre de lo que mide.',
+    explanation:'El ROE se mide con el MEDIDOR DE ONDAS ESTACIONARIAS (SWR meter), que compara la potencia incidente y la reflejada en la línea de transmisión mediante un acoplador direccional.'
+  },
+  {
+    id:113,
+    text:'Si se duplica la frecuencia de la corriente que atraviesa una inductancia, ¿qué sucede con la reactancia?',
+    a:'Se duplica.',b:'Se reduce a la mitad.',c:'Se cuadriplica.',d:'Queda igual.',
+    answer:'a',
+    hint:'XL = 2π × f × L. La reactancia inductiva es directamente proporcional a la frecuencia.',
+    explanation:'XL = 2πfL. Si f se duplica (2f), entonces XL = 2π(2f)L = 2×(2πfL) → XL se DUPLICA. La reactancia inductiva es linealmente proporcional a la frecuencia.'
+  },
+  {
+    id:114,
+    text:'Desde la antena, en un receptor, ¿cuál es la etapa que antecede al amplificador de F.I.?',
+    a:'Amplificador de R.F.',b:'Mezclador.',c:'Detector.',d:'Amplificador de AF.',
+    answer:'b',
+    hint:'El Amp. FI recibe la señal ya convertida a FI. ¿Quién hace esa conversión?',
+    explanation:'La cadena es: Amp.RF → MEZCLADOR → Amp.FI. El mezclador convierte la señal de RF a la FI, y el amplificador de FI amplifica esa señal ya convertida. El mezclador PRECEDE al Amp.FI.'
+  },
+  {
+    id:115,
+    text:'Desde la antena, en un receptor, ¿cuál es la etapa que está inmediatamente después del detector?',
+    a:'Amplificador de R.F.',b:'Amplificador de F.I.',c:'Amplificador de audio.',d:'Mezclador.',
+    answer:'c',
+    hint:'El detector extrae la señal de audio. ¿Qué necesita esa señal de audio para llegar al parlante?',
+    explanation:'La cadena es: Detector → AMPLIFICADOR DE AUDIO → Parlante. Después del detector se tiene la señal de audio demodulada, que el amplificador de AF amplifica para mover el parlante.'
+  },
+  {
+    id:116,
+    text:'Desde la antena, en un receptor, ¿cuál es la etapa que está inmediatamente antes de la etapa detectora?',
+    a:'Amplificador de R.F.',b:'Amplificador de F.I.',c:'Amplificador de AF.',d:'Ninguna de las nombradas.',
+    answer:'b',
+    hint:'El detector necesita una señal de FI amplificada. ¿Qué etapa la provee?',
+    explanation:'La cadena es: Amp.FI → DETECTOR. El Amplificador de FI es la etapa inmediatamente anterior al detector. Provee la señal de FI amplificada y selectiva que el detector demodulará.'
+  },
+  {
+    id:117,
+    text:'¿Cuál es la velocidad de las ondas electromagnéticas en el espacio libre?',
+    a:'3.000.000 km/seg.',b:'300.000 km/seg.',c:'300/Frecuencia (MHz).',d:'142,5/Frecuencia (MHz).',
+    answer:'b',
+    hint:'Es la velocidad de la luz en el vacío, uno de los datos más fundamentales de la física.',
+    explanation:'Las ondas electromagnéticas (radio, luz, rayos X) viajan a c = 300.000 km/s = 3×10⁸ m/s en el vacío. Es la constante de la velocidad de la luz.'
+  },
+  {
+    id:118,
+    text:'Los coaxiles son líneas de transmisión:',
+    a:'Balanceadas.',b:'Desbalanceadas.',c:'De muy alta impedancia.',d:'Para conectar en el punto de máxima tensión de la antena.',
+    answer:'b',
+    hint:'El coaxil tiene un conductor central y un blindaje (masa). Los dos conductores no son equivalentes.',
+    explanation:'Los cables coaxiles son líneas DESBALANCEADAS: tienen un conductor interno (señal) y un conductor externo (blindaje/masa). Los dos conductores no son simétricos respecto a tierra.'
+  },
+  {
+    id:119,
+    text:'Las líneas abiertas son líneas de transmisión:',
+    a:'Balanceadas.',b:'Desbalanceadas.',c:'De muy baja impedancia.',d:'Para conectar en el punto de máxima corriente de la antena.',
+    answer:'a',
+    hint:'El cable paralelo (TV) tiene dos conductores idénticos y simétricos: ninguno es "masa".',
+    explanation:'Las líneas abiertas (cable paralelo o escalerilla) son líneas BALANCEADAS: sus dos conductores son simétricos respecto a tierra, sin conductor de masa/blindaje.'
+  },
+  {
+    id:120,
+    text:'¿Cómo están formadas las ondas de radio?',
+    a:'Por campos eléctricos.',b:'Por campos magnéticos.',c:'Por campos eléctricos y magnéticos.',d:'Por campos electroestáticos.',
+    answer:'c',
+    hint:'La onda de radio es un tipo de onda ELECTROmagnética. La palabra ya contiene la respuesta.',
+    explanation:'Las ondas de radio son ONDAS ELECTROMAGNÉTICAS: están formadas por campos eléctrico (E) y magnético (H) perpendiculares entre sí y a la dirección de propagación, que se regeneran mutuamente.'
+  },
+  {
+    id:121,
+    text:'Si la señal de una estación en VHF llega muy débil, al límite del umbral del Squelch, ¿qué señal le daría?',
+    a:'Busy.',b:'S-1.',c:'S-9.',d:'S-5.',
+    answer:'b',
+    hint:'La escala S va de S-1 (mínimo) a S-9 (máximo). Al límite del squelch = señal mínima detectable.',
+    explanation:'Una señal al límite del umbral del squelch es la señal mínima audible, que corresponde a S-1 en la escala de medición S (S-meter). S-9 es una señal fuerte (50 µV en HF).'
+  },
+  {
+    id:122,
+    text:'Los "Handies" bibanda utilizados por los radioaficionados, ¿en qué clase de emisión emiten?',
+    a:'F3E.',b:'A3E.',c:'J3E.',d:'J2D.',
+    answer:'a',
+    hint:'Los walkie-talkies de VHF/UHF usan FM para comunicaciones locales con buena calidad de audio.',
+    explanation:'Los handies (radios portátiles) bibanda de VHF/UHF emiten en F3E (FM de voz), que es el estándar para comunicaciones locales y por repetidoras en esas bandas.'
+  },
+  {
+    id:123,
+    text:'Si una estación en la banda de 80 metros llega con muy buena señal, ¿qué señal le daría?',
+    a:'S-3 + 9 dB.',b:'S-9 + 20 dB.',c:'S-20 + 9 dB.',d:'S-3.',
+    answer:'b',
+    hint:'La escala S llega hasta S-9. Señales más fuertes se expresan como S-9 + X dB.',
+    explanation:'Una señal "muy buena" en 80m corresponde a S-9 + 20 dB, que indica 20 dB sobre la referencia de S-9 (50 µV). Es una señal fuerte y clara. La escala S no va más allá de S-9, por eso se usa "+dB".'
+  },
+  {
+    id:124,
+    text:'En el símbolo de la batería, la línea más corta, ¿qué terminal indica?',
+    a:'Positivo.',b:'Negativo.',c:'Neutro.',d:'Fase.',
+    answer:'b',
+    hint:'La línea más larga y más gruesa = positivo. La más corta y delgada = negativo.',
+    explanation:'En el símbolo esquemático de la batería, la línea más corta (y delgada) representa el polo NEGATIVO (cátodo), y la línea más larga (y gruesa) representa el polo positivo (ánodo).'
+  },
+  {
+    id:125,
+    text:'Se dispone de cuatro resistencias (R1=50Ω, R2=10Ω, R3=120Ω y R4=4700Ω) conectadas en paralelo a una fuente de 12 V. ¿Qué corriente circulará por R2?',
+    a:'1200 mA.',b:'120 mA.',c:'12 mA.',d:'1,2 mA.',
+    answer:'a',
+    hint:'En paralelo V es igual en todas las ramas. I = V/R. ¡No te olvides de las unidades!',
+    explanation:'I = V/R2 = 12/10 = 1,2 A = 1200 mA.'
+  },
+  {
+    id:126,
+    text:'Se dispone de cuatro resistencias (R1=50Ω, R2=10Ω, R3=120Ω y R4=4700Ω) conectadas en paralelo a una fuente de 12 V. ¿Qué corriente circulará por R1?',
+    a:'10 mA.',b:'240 mA.',c:'1000 mA.',d:'24 mA.',
+    answer:'b',
+    hint:'En paralelo V es igual en todas las ramas. I = V/R1.',
+    explanation:'I = V/R1 = 12/50 = 0,24 A = 240 mA.'
+  },
+  {
+    id:127,
+    text:'¿En qué posición un dipolo de 80 m transmite más intensamente hacia un lado?',
+    a:'"V" invertida.',b:'Inclinado.',c:'Horizontal.',d:'Vertical.',
+    answer:'b',
+    hint:'La asimetría geométrica de un dipolo inclinado genera preferencia de radiación en una dirección.',
+    explanation:'Un dipolo INCLINADO (sloper) tiene su extremo bajo apuntando hacia un lado, lo que crea un lóbulo de radiación preferente en esa dirección. Es más direccional que el dipolo horizontal o la "V" invertida.'
+  },
+  {
+    id:128,
+    text:'En un receptor, el amplificador de audio frecuencia:',
+    a:'Amplifica la señal modulada para enviarla a la antena.',
+    b:'Extrae el mensaje a partir de la señal demodulada.',
+    c:'Modifica la amplitud o la frecuencia de la portadora pura conforme a la señal del mensaje.',
+    d:'Amplifica la señal demodulada.',
+    answer:'d',
+    hint:'El AF amplificador viene después del detector, así que trabaja con señal ya demodulada (audio puro).',
+    explanation:'El amplificador de AUDIOFRECUENCIA (AF) en el receptor amplifica la señal de audio ya demodulada por el detector, para que tenga la potencia suficiente para mover el parlante o auricular.'
+  },
+  {
+    id:129,
+    text:'Se dispone de cuatro resistencias (R1=50Ω, R2=10Ω, R3=120Ω y R4=4700Ω) conectadas en paralelo a una fuente de 12 V. ¿Qué corriente circulará por R4?',
+    a:'2,55 mA.',b:'25,53 mA.',c:'255,31 mA.',d:'2,55 A.',
+    answer:'a',
+    hint:'En paralelo V es igual. I = V/R4 = 12/4700. ¡Fijate bien la magnitud del resultado!',
+    explanation:'I = 12/4700 ≈ 0,00255 A = 2,55 mA. R4 es muy grande, así que circula muy poca corriente.'
+  },
+  {
+    id:130,
+    text:'En un transceptor, por medio del comando RF GAIN:',
+    a:'Se controla la ganancia de la sección de radio frecuencia del transmisor.',
+    b:'Se controla la ganancia de la sección de radio frecuencia del receptor.',
+    c:'Se controla la ganancia de la sección de audio frecuencia del transmisor.',
+    d:'Se controla la ganancia de la sección de audio frecuencia del receptor.',
+    answer:'b',
+    hint:'RF GAIN controla la sensibilidad del RECEPTOR (no del transmisor) a señales fuertes.',
+    explanation:'El RF GAIN controla la ganancia del amplificador de RF en la sección RECEPTORA del transceptor. Se reduce para evitar saturación con señales muy fuertes o intermodulación.'
+  },
+  {
+    id:131,
+    text:'Las líneas abiertas tienen:',
+    a:'Menor pérdida que las líneas coaxiles.',
+    b:'Igual pérdida que las líneas coaxiles.',
+    c:'Mayor pérdida que las líneas coaxiles.',
+    d:'El doble de pérdida que las líneas coaxiles.',
+    answer:'a',
+    hint:'El coaxil tiene dieléctrico plástico entre sus conductores que introduce pérdidas. La línea abierta tiene aire como dieléctrico.',
+    explanation:'Las líneas abiertas (escalerilla, window line) tienen MENOR pérdida que los coaxiles, especialmente en HF. Esto se debe a que usan aire como dieléctrico (pérdidas mínimas) en lugar del plástico del coaxil.'
+  },
+  {
+    id:132,
+    text:'¿Cuál es la constante práctica que se utiliza para el cálculo de antenas dipolos de ½ longitud de onda según la fórmula Longitud = K/f (MHz)?',
+    a:'K=72.',b:'K=132,5.',c:'K=142,5.',d:'K=300.',
+    answer:'c',
+    hint:'La constante K=142,5 da la longitud total en metros. Para ¼ de onda la constante sería K/2 ≈ 71,25.',
+    explanation:'K = 142,5 para calcular la longitud del dipolo completo (½ onda) en metros: L = 142,5/f(MHz). Esta constante incluye el factor de acortamiento típico (~5%) respecto al λ teórico (K=150).'
+  },
+  {
+    id:133,
+    text:'En un transceptor, por medio del comando AF GAIN:',
+    a:'Se controla la ganancia de la sección de audio frecuencia del transmisor.',
+    b:'Se controla la ganancia de la sección de audio frecuencia del receptor.',
+    c:'Se controla la ganancia de la sección de radio frecuencia del transmisor.',
+    d:'Se controla la ganancia de la sección de radio frecuencia del receptor.',
+    answer:'b',
+    hint:'AF GAIN = control de volumen del receptor. AF = Audio Frequency.',
+    explanation:'El AF GAIN controla el VOLUMEN (ganancia de audiofrecuencia) de la sección receptora del transceptor. Es básicamente el control de volumen del audio de salida al parlante/auricular.'
+  },
+  {
+    id:134,
+    text:'En un transceptor, por medio del comando SQUELCH:',
+    a:'Se atenúa el ruido de las estaciones que llegan con señales débiles.',
+    b:'Se atenúa el ruido de las estaciones que llegan con señales fuertes.',
+    c:'Se silencia el audio cuando a la entrada del receptor no se detecta señal en la frecuencia de trabajo.',
+    d:'Aumenta la ganancia del receptor para estaciones débiles y la disminuye para estaciones fuertes.',
+    answer:'c',
+    hint:'El SQUELCH "corta" el audio cuando no hay señal. Es como una puerta que solo abre si hay señal suficiente.',
+    explanation:'El SQUELCH silencia automáticamente el audio del receptor cuando no se detecta ninguna señal en la frecuencia de trabajo (solo hay ruido de fondo). Al recibir señal, se abre y se escucha.'
+  },
+  {
+    id:135,
+    text:'En un transceptor, por medio del comando MODE:',
+    a:'Se selecciona el modo de operación AM, BLU (SSB), BLU (LSB), CW y FM.',
+    b:'Se selecciona la frecuencia de operación de acuerdo a las memorias programadas.',
+    c:'Se controla la amplitud de la portadora a transmitir en AM, BLU (SSB), BLU (LSB) y FM.',
+    d:'Se selecciona la banda de operación.',
+    answer:'a',
+    hint:'MODE = modo de emisión. Cada modo (AM, FM, SSB, CW) usa una técnica de modulación diferente.',
+    explanation:'El comando MODE selecciona la CLASE DE EMISIÓN: AM (A3E), USB (J3E), LSB (J3E), CW (A1A), FM (F3E), etc. Cambia los circuitos de modulación/demodulación activos en el transceptor.'
+  },
+  {
+    id:136,
+    text:'¿A qué se llama amplificador lineal?',
+    a:'A la etapa que amplifica una fuente de alimentación.',
+    b:'A la etapa que amplifica la potencia de RF de un transmisor.',
+    c:'A la etapa que opera únicamente con componentes lineales.',
+    d:'A la etapa que multiplica "n" veces la tensión domiciliaria.',
+    answer:'b',
+    hint:'El amplificador LINEAL amplifica la potencia de salida del transmisor, aumentando el alcance de las comunicaciones.',
+    explanation:'El AMPLIFICADOR LINEAL amplifica la potencia de RF del transmisor manteniendo la linealidad (sin distorsión ni generación de armónicos). Es la etapa final de potencia, conectada entre el transceptor y la antena.'
+  },
+  {
+    id:137,
+    text:'¿Qué simboliza la "flecha" en un transistor tipo PNP?',
+    a:'La flecha es el colector y apunta hacia adentro del círculo.',
+    b:'La flecha es la base y apunta hacia adentro del círculo.',
+    c:'La flecha es el emisor y apunta hacia adentro del círculo.',
+    d:'La flecha es el colector y apunta hacia fuera del círculo.',
+    answer:'c',
+    hint:'En el símbolo del transistor, la flecha siempre es el EMISOR. En PNP apunta hacia adentro (corriente entra al emisor en sentido convencional).',
+    explanation:'En el símbolo de un transistor PNP, la flecha corresponde al EMISOR y apunta hacia ADENTRO del círculo (hacia la base), indicando el sentido de la corriente convencional que fluye hacia el emisor.'
+  },
+  {
+    id:138,
+    text:'¿Cuál es la longitud de onda correspondiente a una frecuencia de 50,050 MHz?',
+    a:'6,85 m.',b:'5,99 m.',c:'6,10 m.',d:'7,98 m.',
+    answer:'b',
+    hint:'λ(m) = 300 / f(MHz).',
+    explanation:'λ = 300 / 50,050 ≈ 5,994 m ≈ 5,99 m. Esta es la banda de 6 metros de radioaficionados.'
+  },
+  {
+    id:139,
+    text:'¿Cuál es la longitud de onda correspondiente a una frecuencia de 430,130 MHz?',
+    a:'0,662 m.',b:'0,595 m.',c:'0,697 m.',d:'0,98 m.',
+    answer:'c',
+    hint:'λ(m) = 300 / f(MHz).',
+    explanation:'λ = 300 / 430,130 ≈ 0,6975 m ≈ 0,697 m. Esta es la banda de 70 cm (UHF) de radioaficionados.'
+  },
+  {
+    id:140,
+    text:'¿Cuál es el ángulo ideal entre las ramas de una antena dipolo horizontal de ½ longitud de onda para la banda de 80 metros?',
+    a:'45°.',b:'90°.',c:'135°.',d:'180°.',
+    answer:'d',
+    hint:'Un dipolo horizontal óptimo es completamente recto. ¿Cuántos grados forman dos semirrectas opuestas?',
+    explanation:'El ángulo ideal para un dipolo horizontal de ½ onda es 180°: los dos brazos completamente extendidos y alineados (en línea recta), que es la configuración que maximiza la ganancia y la altura efectiva.'
+  },
+  {
+    id:141,
+    text:'Si dos resistencias de igual valor están conectadas en paralelo. ¿Cuánto vale la resistencia total del circuito?',
+    a:'La suma de las dos.',b:'La mitad de una de ellas.',c:'Tres veces el valor de una de ellas.',d:'La cuarta parte del producto de las dos.',
+    answer:'b',
+    hint:'Rt = (R×R)/(R+R) = R²/2R = R/2.',
+    explanation:'Dos resistencias iguales (R) en paralelo: Rt = (R×R)/(R+R) = R²/2R = R/2. La resistencia total es la MITAD de una de ellas. En general, n resistencias iguales en paralelo dan R/n.'
+  },
+  {
+    id:142,
+    text:'Si dos resistencias de igual valor están conectadas en serie. ¿Cuánto vale la resistencia total del circuito?',
+    a:'La suma de las dos.',b:'La mitad de una de ellas.',c:'Tres veces el valor de una de ellas.',d:'La cuarta parte del producto de las dos.',
+    answer:'a',
+    hint:'En serie las resistencias se SUMAN directamente.',
+    explanation:'Dos resistencias iguales (R) en serie: Rt = R + R = 2R. La resistencia total es la SUMA de las dos. En general, n resistencias en serie dan n×R.'
+  },
+  {
+    id:143,
+    text:'Una señal de 725 Hz, ¿a qué rango de frecuencia pertenece?',
+    a:'Radio frecuencia.',b:'Audio frecuencia.',c:'Alta frecuencia.',d:'VHF.',
+    answer:'b',
+    hint:'El oído humano escucha de 20 Hz a 20.000 Hz. ¿725 Hz está dentro de ese rango?',
+    explanation:'725 Hz está dentro del rango audible (20 Hz – 20 kHz), por lo tanto pertenece a la AUDIO FRECUENCIA (AF). La radiofrecuencia empieza aproximadamente a partir de 30 kHz.'
+  },
+  {
+    id:144,
+    text:'Una antena dipolo plegado. ¿Qué impedancia presenta en su centro?',
+    a:'50 Ω.',b:'75 Ω.',c:'150 Ω.',d:'300 Ω.',
+    answer:'d',
+    hint:'El dipolo plegado tiene una impedancia 4 veces mayor que el dipolo simple (≈73 Ω × 4 ≈ 300 Ω).',
+    explanation:'El dipolo plegado (folded dipole) tiene una impedancia de alimentación de ≈300 Ω, que es 4 veces la del dipolo simple (≈73 Ω). Es ideal para conectar directamente con cable paralelo de 300 Ω (cable plano de TV).'
+  },
+  {
+    id:145,
+    text:'El dial de un receptor está calibrado en kilohertz y muestra la frecuencia de 7125 kHz. ¿Qué frecuencia mostraría si estuviera calibrado en Megahertz?',
+    a:'71,25 MHz.',b:'7,125 MHz.',c:'0,007125 MHz.',d:'712,5 MHz.',
+    answer:'b',
+    hint:'1 MHz = 1000 kHz. Para convertir kHz a MHz, dividí por 1000.',
+    explanation:'7125 kHz ÷ 1000 = 7,125 MHz. Esta es la banda de 40 metros (7 MHz) de radioaficionados.'
+  },
+  {
+    id:146,
+    text:'¿Cuál es el período en que se producen los máximos ciclos solares?',
+    a:'2 años.',b:'11 años.',c:'15 años.',d:'5 años.',
+    answer:'b',
+    hint:'El ciclo de manchas solares es uno de los fenómenos astronómicos más conocidos y afecta la propagación en HF.',
+    explanation:'El ciclo de manchas solares tiene un período de aproximadamente 11 AÑOS. Durante el máximo solar, la ionosfera está más ionizada, favoreciendo la propagación en bandas altas de HF (10, 12, 15 m).'
+  },
+  {
+    id:147,
+    text:'Según el código de colores de resistencias, ¿cuál sería la combinación correcta para 290 Ω?',
+    a:'Naranja, Blanco, Negro.',b:'Rojo, Blanco, Marrón.',c:'Rojo, Gris, Marrón.',d:'Rojo, Gris, Negro.',
+    answer:'b',
+    hint:'290 Ω: primer dígito=2, segundo dígito=9, multiplicador=×10. Buscá qué colores corresponden a 2, 9 y ×10.',
+    explanation:'290 Ω: Rojo(2) – Blanco(9) – Marrón(×10) = 29 × 10 = 290 Ω. Código de colores: Negro=0, Marrón=1, Rojo=2, Naranja=3, Amarillo=4, Verde=5, Azul=6, Violeta=7, Gris=8, Blanco=9.'
+  },
+  {
+    id:148,
+    text:'¿Qué elemento de una válvula es el ánodo?',
+    a:'Filamento.',b:'Placa.',c:'Pantalla.',d:'Drenaje.',
+    answer:'b',
+    hint:'En una válvula termoiónica, el ánodo es el electrodo que colecta los electrones emitidos por el cátodo.',
+    explanation:'En una válvula termoiónica, el ÁNODO es la PLACA: el electrodo conectado al polo positivo de la tensión anódica que atrae y colecta los electrones emitidos por el cátodo caliente.'
+  },
+  {
+    id:149,
+    text:'Se dispone de cuatro resistencias (R1=50Ω, R2=10Ω, R3=120Ω y R4=4700Ω) conectadas en paralelo a una fuente de 12 V. ¿Cuál será la resistencia total (aproximada) del circuito?',
+    a:'7,77 KΩ.',b:'77,7 Ω.',c:'7,77 Ω.',d:'777 Ω.',
+    answer:'c',
+    hint:'1/Rt = 1/R1 + 1/R2 + 1/R3 + 1/R4. La R2 (10Ω) domina el cálculo.',
+    explanation:'1/Rt = 1/50 + 1/10 + 1/120 + 1/4700 ≈ 0,02 + 0,1 + 0,00833 + 0,000213 = 0,12855. Rt ≈ 7,78 Ω ≈ 7,77 Ω. La resistencia más pequeña (R2=10Ω) es dominante.'
+  },
+  {
+    id:150,
+    text:'Según el código de colores para resistencias, ¿cuál sería la combinación correcta para 87 Ω?',
+    a:'Gris, Azul, Negro.',b:'Blanco, Azul, Negro.',c:'Blanco, Verde, Marrón.',d:'Gris, Violeta, Negro.',
+    answer:'d',
+    hint:'87 Ω: primer dígito=8, segundo dígito=7, multiplicador=×1. Buscá los colores para 8, 7 y ×1.',
+    explanation:'87 Ω: Gris(8) – Violeta(7) – Negro(×1) = 87 × 1 = 87 Ω. Gris=8, Violeta=7, Negro=multiplicador ×1.'
+  }
+];
+
+// ═══════════════════════════════════════════════════════════════
+//  BANCO DE PREGUNTAS – Reglamentación (82 preguntas)
+// ═══════════════════════════════════════════════════════════════
+const QUESTIONS_REGLAM = [
+  {id:'R1',text:'¿Cuál es la Autoridad de Aplicación del Servicio de Radioaficionados en la Argentina?',
+    a:'La Unión Internacional de Telecomunicaciones (UIT).',
+    b:'La Asociación de Radio Aficionados de la República Argentina.',
+    c:'El Ente Nacional de Comunicaciones (ENACOM).',
+    d:'El Ministerio de Comunicaciones de la Nación.',
+    answer:'c',
+    hint:'Este organismo regulador fue creado en 2015 en reemplazo de la AFSCA y la AFTIC.',
+    explanation:'El ENACOM (Ente Nacional de Comunicaciones) es la Autoridad de Aplicación del Servicio de Radioaficionados en Argentina: otorga licencias, controla el espectro y aplica sanciones.'},
+  {id:'R2',text:'¿Cómo define el reglamento al "Servicio de Radioaficionados"?',
+    a:'Servicio de telecomunicaciones de carácter público para el intercambio de mensajes entre particulares.',
+    b:'Servicio de radiocomunicaciones reservado para organismos de defensa civil y emergencias.',
+    c:'Servicio de radiocomunicaciones cuyo objeto es la instrucción individual, la intercomunicación y los estudios técnicos, efectuado por aficionados debidamente autorizados.',
+    d:'Servicio de radiodifusión de carácter educativo orientado a la enseñanza de la radiotécnica.',
+    answer:'c',
+    hint:'Tres objetivos clave: instrucción, intercomunicación y estudios técnicos. Sin fines de lucro.',
+    explanation:'El Servicio de Radioaficionados tiene por objeto la instrucción individual, la intercomunicación y los estudios técnicos, efectuado por personas debidamente autorizadas que se interesan en la radiotécnica a título personal y sin fines de lucro.'},
+  {id:'R3',text:'¿Cómo define el reglamento al "radioaficionado"?',
+    a:'Persona debidamente autorizada, interesada en la radiotécnica con carácter exclusivamente personal y sin fines de lucro.',
+    b:'Profesional habilitado con título técnico o universitario en telecomunicaciones.',
+    c:'Persona que opera equipos de radio con fines educativos bajo supervisión de un Radio Club.',
+    d:'Técnico en comunicaciones que colabora con organismos de seguridad o defensa.',
+    answer:'a',
+    hint:'Dos condiciones clave: "a título personal" y "sin fines de lucro". No requiere título profesional.',
+    explanation:'El reglamento define al radioaficionado como la persona debidamente autorizada que se interesa en la radiotécnica con carácter exclusivamente personal y sin fines de lucro. No se requiere título profesional.'},
+  {id:'R4',text:'¿Qué es un "Radio Club" según el reglamento de radioaficionados?',
+    a:'Una empresa privada que presta servicios de comunicación por radio a sus socios.',
+    b:'Un organismo público que regula y controla el uso del espectro radioeléctrico.',
+    c:'Una persona jurídica, asociación o entidad sin fines de lucro que agrupa a radioaficionados.',
+    d:'Una instalación de repetición de señales de radioaficionados de uso público.',
+    answer:'c',
+    hint:'Es una entidad jurídica, sin fines de lucro, que agrupa personas con el mismo hobby.',
+    explanation:'El Radio Club es una persona jurídica, asociación o entidad sin fines de lucro que agrupa a radioaficionados. Puede operar estaciones propias y emitir certificados de cursos.'},
+  {id:'R5',text:'¿Qué se entiende por "IA" en el reglamento de radioaficionados argentino?',
+    a:'El indicativo de llamada asignado individualmente a un radioaficionado.',
+    b:'Una interferencia activa detectada en bandas de radioaficionados.',
+    c:'El inspector autorizado del ENACOM para controlar estaciones.',
+    d:'La instalación de antena de una estación de radioaficionado.',
+    answer:'a',
+    hint:'Es la sigla del indicativo de llamada personal (call sign individual), distinto al de un Radio Club.',
+    explanation:'"IA" significa Indicativo de llamada Asignado individualmente: el indicativo (call sign) personal de cada radioaficionado, equivalente al "call sign" en inglés.'},
+  {id:'R6',text:'¿Qué se entiende por "IR" en el reglamento de radioaficionados argentino?',
+    a:'El indicativo de llamada asignado a un Radio Club.',
+    b:'Un Inspector de Radiocomunicaciones habilitado por el ENACOM.',
+    c:'La Interferencia de Radiofrecuencia medida en dBm.',
+    d:'La instalación radioaficionada autorizada por el ENACOM.',
+    answer:'a',
+    hint:'Así como el IA identifica al aficionado individual, el IR identifica a la persona jurídica (Radio Club).',
+    explanation:'"IR" es el Indicativo de llamada de Radio Club: el call sign asignado a la persona jurídica (Radio Club), diferente al indicativo individual (IA) de cada aficionado.'},
+  {id:'R7',text:'¿Qué es la "licencia" en el Servicio de Radioaficionados según el reglamento?',
+    a:'El certificado de aprobación del examen teórico emitido por el Radio Club.',
+    b:'El permiso de importación de equipos de radio otorgado por la Aduana.',
+    c:'El documento oficial emitido por la Autoridad de Aplicación que autoriza a instalar y operar una estación de radioaficionado.',
+    d:'El carnet de socio de un Radio Club habilitado por el ENACOM.',
+    answer:'c',
+    hint:'Es el documento expedido por el ENACOM que habilita legalmente la operación. Sin él, no se puede transmitir.',
+    explanation:'La licencia es el documento oficial emitido por la Autoridad de Aplicación (ENACOM) que autoriza al titular a instalar y operar una estación de radioaficionado. Sin licencia, la operación es ilegal.'},
+  {id:'R8',text:'¿Qué significan las siglas IARP?',
+    a:'Inter-American Amateur Radio Protocol: acuerdo de reciprocidad entre países americanos signatarios.',
+    b:'Instituto Argentino de Radiocomunicaciones Particulares.',
+    c:'Indicador de Alcance de Radio Portátil.',
+    d:'Acuerdo Internacional de Asignación de Radioaficionados Particulares.',
+    answer:'a',
+    hint:'Es el nombre en inglés de un acuerdo regional americano que permite operar con licencia de origen.',
+    explanation:'IARP son las siglas de Inter-American Amateur Radio Protocol: acuerdo de reciprocidad entre países americanos signatarios que permite a radioaficionados operar en esos países usando su licencia de origen.'},
+  {id:'R9',text:'¿Qué es la "señal distintiva" de una estación de radioaficionado?',
+    a:'El indicativo de llamada que identifica unívocamente a la estación durante las transmisiones.',
+    b:'La frecuencia preferencial usada por el radioaficionado para establecer contactos.',
+    c:'El código de acceso para repetidoras y nodos digitales.',
+    d:'La potencia característica usada habitualmente por el radioaficionado.',
+    answer:'a',
+    hint:'Es lo que el radioaficionado dice para identificarse: su indicativo de llamada.',
+    explanation:'La señal distintiva (o indicativo de llamada) es la combinación alfanumérica única asignada por el ENACOM que identifica a cada estación. Debe emitirse periódicamente durante las transmisiones.'},
+  {id:'R10',text:'¿Qué es la "categoría" de un radioaficionado según el reglamento?',
+    a:'El nivel de potencia máxima autorizada para transmitir.',
+    b:'El tipo de modulación habilitada según el examen rendido.',
+    c:'La clasificación del radioaficionado según los conocimientos acreditados mediante examen aprobado.',
+    d:'El grupo de frecuencias asignado según la antigüedad en el servicio.',
+    answer:'c',
+    hint:'La categoría se obtiene aprobando el examen correspondiente y determina los privilegios de operación.',
+    explanation:'La categoría (Novicio, General, Superior, Especial) es la clasificación del radioaficionado según los conocimientos técnicos y reglamentarios acreditados mediante examen. Determina bandas, modos y potencias permitidas.'},
+  {id:'R11',text:'¿Cómo se denomina en radioaficionados a las comunicaciones de larga distancia, generalmente entre países o continentes?',
+    a:'QTH: comunicaciones con estación base fija.',
+    b:'DX: comunicaciones de larga distancia.',
+    c:'QRP: comunicaciones de baja potencia a gran distancia.',
+    d:'OM: comunicaciones entre operadores experimentados.',
+    answer:'b',
+    hint:'DX es la abreviatura telegráfica de "distancia" y en radioaficionados designa las largas distancias.',
+    explanation:'El término "DX" designa las comunicaciones de larga distancia, generalmente intercontinentales. Es muy buscado por los aficionados como prueba de destreza técnica y propagación favorable.'},
+  {id:'R12',text:'¿Qué es una "repetidora" según el reglamento de radioaficionados?',
+    a:'Un equipo que amplifica la señal de audio en una estación base.',
+    b:'Una estación auxiliar automática que retransmite señales en la misma frecuencia.',
+    c:'Una estación automática que recibe en una frecuencia y retransmite en otra, para extender el alcance de las comunicaciones.',
+    d:'Un transceptor portátil que permite comunicaciones en movimiento.',
+    answer:'c',
+    hint:'Recibe en una frecuencia (entrada) y transmite en otra (salida), generalmente desde un punto elevado.',
+    explanation:'Una repetidora es una estación automática que recibe transmisiones en una frecuencia (entrada) y las retransmite simultáneamente en otra frecuencia (salida), desde una ubicación elevada, para ampliar el alcance de las comunicaciones.'},
+  {id:'R13',text:'¿Qué es un "digipeater" según el reglamento?',
+    a:'Una estación automática de repetición digital de paquetes de radio (packet radio).',
+    b:'Un equipo de digitalización de señales analógicas de audio.',
+    c:'Un transceptor digital de mano habilitado para operar en VHF.',
+    d:'Un decodificador de señales APRS para aplicaciones de telemetría.',
+    answer:'a',
+    hint:'Es la versión digital de una repetidora, usada en packet radio y APRS.',
+    explanation:'Un digipeater (digital repeater) es una estación automática que recibe paquetes de datos de radio y los retransmite para extender su alcance. Es la base del sistema APRS y del packet radio.'},
+  {id:'R14',text:'¿Qué es un "TNC" en el contexto del reglamento de radioaficionados?',
+    a:'Un tipo de conector de antena de alta frecuencia.',
+    b:'Un controlador de nodo terminal (Terminal Node Controller): dispositivo que enlaza una computadora con una radio para transmisión de datos.',
+    c:'Un certificado técnico nacional emitido por el ENACOM.',
+    d:'Un tipo de modulación de fase usado en transmisiones satelitales.',
+    answer:'b',
+    hint:'Es el dispositivo que hace posible el packet radio: convierte datos digitales en señales de audio para la radio.',
+    explanation:'El TNC (Terminal Node Controller) actúa como módem entre una computadora y un transceptor de radio, permitiendo la comunicación digital en packet radio y APRS.'},
+  {id:'R15',text:'¿Qué es una tarjeta "QSL"?',
+    a:'Una confirmación escrita de un contacto de radio realizado entre dos estaciones.',
+    b:'Un certificado de aprobación del examen de radioaficionado.',
+    c:'Un formulario oficial para solicitar cambio de indicativo.',
+    d:'Una planilla de registro de frecuencias autorizadas por el ENACOM.',
+    answer:'a',
+    hint:'Es la "prueba" del contacto: los aficionados intercambian estas tarjetas para confirmar que se comunicaron.',
+    explanation:'La tarjeta QSL es la confirmación escrita (física o electrónica) de un contacto de radio establecido entre dos estaciones. Su intercambio es una tradición y puede usarse para obtener diplomas y premios.'},
+  {id:'R16',text:'¿Cómo define el reglamento al "código Morse"?',
+    a:'Un sistema de encriptación de mensajes de radio utilizado en comunicaciones militares.',
+    b:'Un código de señalización que representa letras, números y signos mediante combinaciones de puntos y rayas (señales cortas y largas).',
+    c:'Un estándar internacional de transmisión digital de baja velocidad.',
+    d:'Un protocolo de comunicación por satélite utilizado en emergencias.',
+    answer:'b',
+    hint:'Punto y raya, corto y largo: es el sistema más antiguo de comunicación telegráfica por radio.',
+    explanation:'El código Morse (Código Internacional Morse) representa caracteres mediante combinaciones de señales cortas (puntos) y largas (rayas). Fue el primer sistema de comunicación a distancia por radio.'},
+  {id:'R17',text:'¿Qué es una "radiobaliza" según el reglamento?',
+    a:'Una estación de radio que emite señales fijas de identificación o socorro.',
+    b:'Una antena balizada con luces para evitar colisiones aéreas.',
+    c:'Un tipo de repetidora de baja potencia para uso urbano.',
+    d:'Un dispositivo de seguimiento GPS integrado a un transceptor.',
+    answer:'a',
+    hint:'Emite de forma continua o periódica para que otras estaciones puedan orientarse o detectar emergencias.',
+    explanation:'Una radiobaliza es una estación de radio que emite señales fijas de identificación, orientación o socorro. En radioaficionados se usan para propagación (IBP) y en emergencias como balizas de socorro.'},
+  {id:'R18',text:'¿Qué es el IBP en el contexto del reglamento de radioaficionados?',
+    a:'Indicador de Banda Primaria, que clasifica las bandas según su asignación principal.',
+    b:'International Beacon Project: red mundial de radiobalizas de HF coordinadas por la IARU para estudio de propagación.',
+    c:'Intervalo de Batería de Prueba: tiempo mínimo de operación de equipos en emergencias.',
+    d:'Informe de Banda Preferencial emitido por el ENACOM.',
+    answer:'b',
+    hint:'Es un proyecto global coordinado por la IARU con balizas en varios continentes para estudiar la propagación ionosférica.',
+    explanation:'El IBP (International Beacon Project) es una red de balizas distribuidas mundialmente y coordinadas por la IARU. Emiten en secuencia en las bandas de HF para que los radioaficionados estudien las condiciones de propagación.'},
+  {id:'R19',text:'¿Qué es un "concurso" en el Servicio de Radioaficionados?',
+    a:'Una actividad competitiva organizada donde los radioaficionados intentan realizar el mayor número de contactos en un período determinado.',
+    b:'Un examen práctico de operación requerido para ascender de categoría.',
+    c:'Una convocatoria del ENACOM para asignar indicativos especiales.',
+    d:'Un evento deportivo de comunicaciones organizado por la IARU.',
+    answer:'a',
+    hint:'Similar a una competencia deportiva pero en radio: gana quien hace más contactos (QSOs) en el tiempo dado.',
+    explanation:'Un concurso (contest) de radioaficionados es una actividad competitiva reglamentada donde los participantes realizan el mayor número de contactos de radio en un período determinado, siguiendo reglas específicas de puntuación.'},
+  {id:'R20',text:'¿Qué implica la "ética operativa" en el Servicio de Radioaficionados?',
+    a:'El conjunto de normas de conducta y buenas prácticas que deben observar los radioaficionados durante sus transmisiones.',
+    b:'La obligación de reportar al ENACOM toda transmisión recibida de terceros.',
+    c:'La prohibición de transmitir música o entretenimiento en las bandas de aficionados.',
+    d:'El compromiso de usar exclusivamente código Morse en comunicaciones de emergencia.',
+    answer:'a',
+    hint:'Es el "fair play" de la radio: cómo comportarse correctamente con los demás operadores.',
+    explanation:'La ética operativa comprende el conjunto de normas de conducta, cortesía y buenas prácticas que los operadores deben observar: escuchar antes de transmitir, respetar frecuencias en uso, no interferir, identificarse correctamente, etc.'},
+  {id:'R21',text:'¿Qué es un "veedor" en el contexto del reglamento de radioaficionados?',
+    a:'El operador de una estación base que supervisa las transmisiones de principiantes.',
+    b:'El radioaficionado habilitado como inspector por la Autoridad de Aplicación para controlar el cumplimiento del reglamento.',
+    c:'El representante técnico de un Radio Club ante el ENACOM.',
+    d:'El operador de guardia en una frecuencia de emergencia.',
+    answer:'b',
+    hint:'Es una figura de control y fiscalización: un aficionado que actúa como inspector oficial.',
+    explanation:'El veedor es un radioaficionado habilitado por la Autoridad de Aplicación (ENACOM) para controlar el cumplimiento del reglamento de radioaficionados. Actúa como inspector en nombre de la Autoridad.'},
+  {id:'R22',text:'Cuando el Servicio de Radioaficionados opera como servicio secundario en una banda compartida, ¿qué ocurre?',
+    a:'El radioaficionado tiene prioridad absoluta sobre los demás servicios en esa banda.',
+    b:'El radioaficionado no puede operar en bandas compartidas bajo ninguna circunstancia.',
+    c:'Ambos servicios tienen derechos totalmente equivalentes en esa banda.',
+    d:'El aficionado no puede causar interferencia al servicio primario ni reclamar protección frente a él; sí frente a otros secundarios.',
+    answer:'d',
+    hint:'Los servicios secundarios están "por debajo" de los primarios en la jerarquía del espectro.',
+    explanation:'Cuando opera como secundario, el Servicio de Radioaficionados no puede causar interferencia perjudicial al servicio primario ni reclamar protección frente a él. Sí puede reclamar protección frente a otras estaciones secundarias.'},
+  {id:'R23',text:'Según el reglamento, ¿en qué situación puede un radioaficionado usar líneas telefónicas comerciales vinculadas a su estación?',
+    a:'Solo en situaciones de emergencia real que afecten la vida humana o la propiedad.',
+    b:'En cualquier momento, siempre que el contacto sea con otro radioaficionado.',
+    c:'Solo con autorización previa del ENACOM para cada enlace telefónico.',
+    d:'Únicamente para comunicaciones con organismos de defensa civil.',
+    answer:'a',
+    hint:'El uso de líneas telefónicas está muy restringido para mantener el carácter propio del servicio.',
+    explanation:'El reglamento permite el enlace con líneas telefónicas comerciales solo en situaciones de emergencia que afecten la vida humana o la propiedad. Fuera de esas situaciones, el servicio debe operar de forma autónoma.'},
+  {id:'R24',text:'¿Cuál es la vigencia de una licencia de radioaficionado en Argentina?',
+    a:'2 años, renovables automáticamente.',
+    b:'5 años, renovables por igual período.',
+    c:'10 años, con renovación obligatoria por examen.',
+    d:'Es vitalicia, sin necesidad de renovación.',
+    answer:'b',
+    hint:'La licencia tiene un período definido de vigencia y debe renovarse antes de su vencimiento.',
+    explanation:'La licencia de radioaficionado en Argentina tiene una vigencia de 5 años y puede renovarse por igual período mediante el trámite correspondiente ante el ENACOM.'},
+  {id:'R25',text:'¿Cuándo puede iniciarse el trámite de renovación de la licencia de radioaficionado?',
+    a:'El mismo día de su vencimiento.',
+    b:'Con al menos un año de anticipación al vencimiento.',
+    c:'En cualquier momento dentro del período de vigencia de 5 años.',
+    d:'Solo dentro de los 30 días posteriores al vencimiento.',
+    answer:'c',
+    hint:'La renovación puede gestionarse en cualquier momento durante la vigencia, no solo al final.',
+    explanation:'El trámite de renovación puede iniciarse en cualquier momento dentro del período de vigencia de 5 años. Se recomienda no esperar al último momento para evitar operar con licencia vencida.'},
+  {id:'R26',text:'¿Cuál es la vigencia de la autorización de una repetidora de radioaficionados?',
+    a:'1 año, renovable anualmente.',
+    b:'3 años, independiente de la licencia del titular.',
+    c:'5 años, coincidente con la vigencia de la licencia de su titular.',
+    d:'Es permanente mientras el titular mantenga su licencia activa.',
+    answer:'c',
+    hint:'La vigencia de la repetidora está alineada con la de la licencia del aficionado responsable.',
+    explanation:'La autorización para una repetidora tiene una vigencia de 5 años, en coincidencia con la vigencia de la licencia del radioaficionado titular responsable de la estación.'},
+  {id:'R27',text:'¿Con qué intervalo máximo debe identificarse una estación de radioaficionado durante sus transmisiones?',
+    a:'Cada 5 minutos como máximo.',
+    b:'Cada 10 minutos como máximo, y siempre al inicio y al final de cada transmisión.',
+    c:'Cada 15 minutos como máximo.',
+    d:'Solo al inicio y al final de cada sesión de transmisión.',
+    answer:'b',
+    hint:'10 minutos es el intervalo máximo: más frecuente está permitido, menos frecuente no.',
+    explanation:'El reglamento establece que toda estación debe transmitir su indicativo de llamada al menos cada 10 minutos durante sus transmisiones, además de al inicio y al final de cada período de transmisión.'},
+  {id:'R28',text:'¿Qué establece el reglamento respecto al uso de frecuencias de emergencia por radioaficionados?',
+    a:'Los radioaficionados pueden usar cualquier frecuencia en caso de emergencia real.',
+    b:'Existen frecuencias específicamente designadas para comunicaciones de emergencia que deben mantenerse disponibles.',
+    c:'Las frecuencias de emergencia son exclusivas de organismos gubernamentales.',
+    d:'En emergencias, los radioaficionados deben solicitar autorización al ENACOM antes de transmitir.',
+    answer:'b',
+    hint:'Hay frecuencias "guardadas" para emergencias que la comunidad respeta para mantenerlas despejadas.',
+    explanation:'El reglamento y la práctica establecen frecuencias designadas para comunicaciones de emergencia en las bandas de radioaficionados. Deben mantenerse despejadas para garantizar su disponibilidad ante situaciones de emergencia.'},
+  {id:'R29',text:'¿Cuántos días tiene de vigencia una autorización temporaria emitida por el ENACOM para un radioaficionado?',
+    a:'30 días.',
+    b:'60 días.',
+    c:'90 días.',
+    d:'180 días.',
+    answer:'c',
+    hint:'Es un período de tres meses: suficiente para gestionar la licencia definitiva.',
+    explanation:'La autorización temporaria emitida por el ENACOM tiene una vigencia de 90 días. Durante este período, el radioaficionado puede operar legalmente mientras se tramita la licencia definitiva.'},
+  {id:'R30',text:'¿Cuántos días hábiles tiene el radioaficionado para notificar al ENACOM el cambio de domicilio de su estación?',
+    a:'10 días hábiles desde producido el cambio.',
+    b:'30 días corridos desde producido el cambio.',
+    c:'60 días desde producido el cambio.',
+    d:'No es necesario notificar el cambio de domicilio.',
+    answer:'a',
+    hint:'Es un plazo corto: menos de dos semanas hábiles para mantener actualizado el registro.',
+    explanation:'El reglamento exige notificar al ENACOM cualquier cambio de domicilio de la estación dentro de los 10 días hábiles de producido el mismo, para mantener el registro actualizado.'},
+  {id:'R31',text:'¿Qué es la IARU?',
+    a:'Indicador de Acceso a Radio Urbana, norma de planificación de redes.',
+    b:'Acuerdo de Interoperabilidad entre Agencias de Radio Unificadas.',
+    c:'Unión Internacional de Radioaficionados (International Amateur Radio Union): organismo mundial que representa al Servicio de Radioaficionados ante la UIT.',
+    d:'Instituto Americano de Radiocomunicaciones Unificadas.',
+    answer:'c',
+    hint:'Es la "voz" de los radioaficionados ante la UIT, la organización internacional de telecomunicaciones.',
+    explanation:'La IARU (International Amateur Radio Union) agrupa a las asociaciones nacionales de radioaficionados y representa al Servicio de Radioaficionados ante la Unión Internacional de Telecomunicaciones (UIT).'},
+  {id:'R32',text:'¿Cómo se relacionan Argentina, la IARU y la UIT en el contexto del Servicio de Radioaficionados?',
+    a:'Argentina, a través de su asociación representativa, es miembro de la IARU, que a su vez es miembro de sector de la UIT.',
+    b:'Argentina es miembro directo de la UIT que regula internamente a través de la IARU.',
+    c:'La IARU designa representantes en la UIT que luego negocian acuerdos con Argentina.',
+    d:'Argentina no tiene relación directa con la IARU ni con la UIT en materia de radioaficionados.',
+    answer:'a',
+    hint:'La cadena es: Argentina → IARU → UIT. La asociación nacional integra el organismo mundial.',
+    explanation:'Argentina, a través de su asociación representativa de radioaficionados, es miembro de la IARU. La IARU, a su vez, es miembro del sector de radiocomunicaciones de la UIT (ITU-R), donde defiende los intereses del Servicio de Radioaficionados.'},
+  {id:'R33',text:'¿Cuál es la categoría mínima requerida para ser titular de un Radio Club?',
+    a:'Novicio.',
+    b:'General.',
+    c:'Superior.',
+    d:'Especial.',
+    answer:'b',
+    hint:'Se necesita más que la categoría de entrada: el responsable debe tener conocimientos consolidados.',
+    explanation:'Para ser titular (responsable técnico) de un Radio Club, el radioaficionado debe poseer al menos la categoría General. La categoría Novicio no es suficiente para asumir esa responsabilidad.'},
+  {id:'R34',text:'¿Qué indicativos debe usar un socio al operar la estación de su Radio Club?',
+    a:'El indicativo del Radio Club (IR) junto con el indicativo personal del operador (IA).',
+    b:'Solo el indicativo del Radio Club (IR), sin mención del indicativo personal.',
+    c:'Solo el indicativo personal (IA), aunque opere desde el Radio Club.',
+    d:'Un indicativo especial asignado específicamente para esa operación.',
+    answer:'a',
+    hint:'Al operar desde el Club, hay que identificar tanto la estación del Club como al operador.',
+    explanation:'Cuando un socio opera la estación de su Radio Club, debe identificarse usando el indicativo del Radio Club (IR) e indicar también su propio indicativo personal (IA).'},
+  {id:'R35',text:'¿En qué bandas puede operar un radioaficionado cuando usa la estación de su Radio Club?',
+    a:'Solo en las bandas autorizadas para su propia categoría personal.',
+    b:'En todas las bandas que tenga habilitadas el Radio Club, independientemente de su categoría.',
+    c:'En las bandas de la categoría superior entre la del operador y la del Club.',
+    d:'En cualquier banda de radioaficionados sin restricción de categoría.',
+    answer:'a',
+    hint:'Los privilegios no se amplían por usar el equipo del Club: cada operador está limitado por su propia categoría.',
+    explanation:'Al operar la estación de un Radio Club, el radioaficionado solo puede usar las bandas autorizadas para su propia categoría personal. No puede ampliar sus privilegios por el hecho de estar en el Club.'},
+  {id:'R36',text:'¿Cómo debe identificarse un radioaficionado que opera la estación de un Radio Club estando "en práctica operativa"?',
+    a:'Usando el indicativo del Radio Club, seguido de la expresión "en práctica operativa" y su IA personal.',
+    b:'Solo con su indicativo personal (IA), omitiendo el indicativo del Club.',
+    c:'Con el indicativo del Club más el sufijo "/N" para indicar Novicio en formación.',
+    d:'No puede operar en práctica operativa desde una estación de Radio Club.',
+    answer:'a',
+    hint:'La identificación especial avisa a los demás que el operador está en formación bajo supervisión.',
+    explanation:'Un radioaficionado en práctica operativa que usa la estación de un Radio Club debe identificarse con el IR del Club, indicar "en práctica operativa" y agregar su IA personal.'},
+  {id:'R37',text:'¿Qué entidad puede emitir certificados de radioescucha en Argentina?',
+    a:'Solo los Radio Clubs habilitados pueden emitir certificados de radioescucha.',
+    b:'El ENACOM directamente, sin intervención de los Radio Clubs.',
+    c:'Cualquier radioaficionado con categoría Superior o Especial.',
+    d:'La IARU a través de su delegación argentina.',
+    answer:'a',
+    hint:'Es una función específica de los Radio Clubs, no de los aficionados individuales.',
+    explanation:'Solo los Radio Clubs debidamente habilitados pueden emitir certificados de radioescucha. Esta es una de las funciones específicas reconocidas por el reglamento.'},
+  {id:'R38',text:'¿Puede un Radio Club tener filiales?',
+    a:'Sí, puede tener filiales en diferentes localidades, con las mismas prerrogativas.',
+    b:'No, cada Radio Club es una entidad independiente sin posibilidad de filiales.',
+    c:'Solo puede tener una filial por provincia.',
+    d:'Solo puede tener filiales en el exterior del país.',
+    answer:'a',
+    hint:'Las filiales amplían el alcance del Radio Club a otras localidades.',
+    explanation:'Los Radio Clubs pueden tener filiales en diferentes localidades del país, y estas filiales tienen las mismas prerrogativas que el Club matriz en cuanto a actividades de radioaficionados.'},
+  {id:'R39',text:'Si no existe Radio Club en la provincia de un radioaficionado, ¿a quién puede acudir para obtener servicios de Radio Club?',
+    a:'A cualquier Radio Club de la misma provincia.',
+    b:'No puede acceder a esos servicios sin Radio Club en su provincia.',
+    c:'Solo al Radio Club más cercano a su domicilio, aunque sea de otra provincia.',
+    d:'Debe asociarse a un Radio Club de otra provincia y gestionar a distancia.',
+    answer:'a',
+    hint:'Los radioaficionados sin RC en su localidad pueden acudir a cualquier RC de la misma provincia.',
+    explanation:'Cuando no existe Radio Club en la localidad del radioaficionado, este puede acudir a cualquier Radio Club de la misma provincia para obtener los servicios que normalmente presta el Radio Club local.'},
+  {id:'R40',text:'¿Quién asigna el indicativo de llamada a un radioaficionado individual?',
+    a:'La Autoridad de Aplicación (ENACOM), en base al Radio Club, filial o localidad del solicitante.',
+    b:'Cualquier Radio Club habilitado que tenga convenio con el ENACOM.',
+    c:'La IARU, que luego notifica al ENACOM para su registro.',
+    d:'El propio radioaficionado, que lo elige libremente entre los disponibles.',
+    answer:'a',
+    hint:'Solo la Autoridad de Aplicación tiene potestad para asignar indicativos oficiales.',
+    explanation:'El indicativo de llamada (IA) es asignado por el ENACOM tomando como base el Radio Club, filial o localidad del solicitante. No puede ser elegido libremente por el aficionado.'},
+  {id:'R41',text:'¿Puede una persona en práctica operativa usar el indicativo de llamada (IA) del radioaficionado que la supervisa?',
+    a:'Sí, identificándose correctamente como "en práctica operativa" junto con el IA del supervisor.',
+    b:'No, el IA es exclusivo del titular y no puede ser compartido bajo ninguna circunstancia.',
+    c:'Solo si la persona en práctica es familiar directo del titular del IA.',
+    d:'Solo con autorización expresa del ENACOM para cada sesión de práctica.',
+    answer:'a',
+    hint:'La práctica operativa implica aprender bajo supervisión: el titular presta su indicativo al alumno.',
+    explanation:'Sí, durante la práctica operativa una persona puede operar usando el IA del radioaficionado que la supervisa, siempre identificándose correctamente como "en práctica operativa" junto con el indicativo del supervisor.'},
+  {id:'R42',text:'¿Puede un Radio Club usar su indicativo (IR) para dictar cursos de radioaficionados?',
+    a:'Sí, los Radio Clubs pueden usar su IR en actividades de instrucción y cursos.',
+    b:'No, el IR solo puede usarse para comunicaciones de radioaficionados, no para actividades educativas.',
+    c:'Solo si el curso está específicamente habilitado por el ENACOM.',
+    d:'Solo para cursos de código Morse, no para cursos técnicos.',
+    answer:'a',
+    hint:'La formación de nuevos radioaficionados es una de las funciones esenciales de los Radio Clubs.',
+    explanation:'Los Radio Clubs pueden usar su indicativo (IR) en actividades de instrucción y cursos, ya que la formación de nuevos radioaficionados es una de sus funciones esenciales reconocidas por el reglamento.'},
+  {id:'R43',text:'¿Puede un Radio Club administrar exámenes de radioaficionados bajo su indicativo (IR)?',
+    a:'Sí, los Radio Clubs habilitados pueden administrar exámenes bajo su IR.',
+    b:'No, los exámenes son administrados exclusivamente por la Autoridad de Aplicación.',
+    c:'Solo si el Radio Club tiene convenio especial con el ENACOM.',
+    d:'Solo para exámenes de categoría Novicio.',
+    answer:'b',
+    hint:'Los exámenes son potestad exclusiva del ENACOM, no de los Clubs.',
+    explanation:'Los exámenes de radioaficionados son administrados por la Autoridad de Aplicación (ENACOM), no por los Radio Clubs. Los Clubs pueden dictar cursos preparatorios, pero el examen oficial es competencia exclusiva del ENACOM.'},
+  {id:'R44',text:'¿Cuál es la edad mínima para obtener la licencia de radioaficionado categoría Novicio?',
+    a:'7 años.',
+    b:'9 años.',
+    c:'12 años.',
+    d:'16 años.',
+    answer:'b',
+    hint:'El reglamento argentino es muy inclusivo con los jóvenes: la edad mínima es menor de lo que muchos asumen.',
+    explanation:'La edad mínima para obtener la licencia de categoría Novicio es de 9 años. El reglamento argentino permite que niños ingresen al servicio de radioaficionados con esa categoría básica.'},
+  {id:'R45',text:'¿Cuál es la edad mínima para obtener la licencia de radioaficionado categoría General?',
+    a:'13 años.',
+    b:'16 años.',
+    c:'18 años.',
+    d:'21 años.',
+    answer:'a',
+    hint:'Es mayor que para Novicio, pero aún permite que adolescentes jóvenes accedan a esta categoría.',
+    explanation:'La edad mínima para obtener la categoría General es de 13 años. A partir de esa edad, los jóvenes pueden acceder a los privilegios más amplios que otorga esta categoría.'},
+  {id:'R46',text:'¿Cuál es la potencia máxima de pico de envolvente (PEP) autorizada para un radioaficionado de categoría Novicio en Argentina?',
+    a:'10 W PEP.',
+    b:'50 W PEP.',
+    c:'100 W PEP.',
+    d:'200 W PEP.',
+    answer:'d',
+    hint:'La potencia para Novicio es mayor de lo que muchos asumen: no es la más baja del reglamento.',
+    explanation:'Un radioaficionado de categoría Novicio puede operar con hasta 200 W PEP (pico de envolvente). Esta potencia está sujeta además a las restricciones de banda y modo propias de la categoría.'},
+  {id:'R47',text:'¿Cuántos años de antigüedad en una categoría se requieren como mínimo para ascender a la categoría inmediata superior?',
+    a:'1 año.',
+    b:'2 años.',
+    c:'Sin requisito de antigüedad, solo aprobar el examen.',
+    d:'3 años en la categoría actual.',
+    answer:'d',
+    hint:'No basta con aprobar el examen: también se necesita tiempo de experiencia en la categoría actual.',
+    explanation:'Para ascender a la categoría inmediata superior se requiere haber permanecido al menos 3 años en la categoría actual, además de aprobar el examen correspondiente a la nueva categoría.'},
+  {id:'R48',text:'¿Cuál es la vigencia de la licencia de radioaficionado y cuándo puede renovarse?',
+    a:'2 años; puede renovarse 6 meses antes del vencimiento.',
+    b:'3 años; puede renovarse 1 año antes del vencimiento.',
+    c:'5 años; puede renovarse en cualquier momento durante la vigencia.',
+    d:'10 años; puede renovarse 2 años antes del vencimiento.',
+    answer:'c',
+    hint:'La vigencia es de 5 años y la renovación puede gestionarse en cualquier momento, sin esperar al vencimiento.',
+    explanation:'La licencia tiene una vigencia de 5 años. El trámite de renovación puede iniciarse en cualquier momento dentro de ese período de vigencia, sin necesidad de esperar al vencimiento.'},
+  {id:'R49',text:'¿Qué es un "radioescucha" según el reglamento?',
+    a:'El radioaficionado con licencia activa que realiza guardia en frecuencias de emergencia.',
+    b:'La persona habilitada mediante certificado de un Radio Club para recibir y escuchar transmisiones de radioaficionados, sin estar autorizada a transmitir.',
+    c:'El operador que monitorea el espectro por cuenta del ENACOM.',
+    d:'El radioaficionado con licencia vencida que no puede transmitir pero sí recibir.',
+    answer:'b',
+    hint:'Es quien recibe pero no transmite: su certificado lo expide un Radio Club habilitado.',
+    explanation:'El radioescucha es la persona habilitada mediante certificado emitido por un Radio Club para recibir y escuchar transmisiones de radioaficionados, pero sin estar autorizada a transmitir. Es una categoría previa a la licencia de aficionado.'},
+  {id:'R50',text:'¿Para qué países es válido el Acuerdo IARP?',
+    a:'Para todos los países miembros de la ONU que adhirieron al acuerdo.',
+    b:'Para los países americanos que son signatarios del acuerdo IARP.',
+    c:'Para todos los países de América Latina que integran la IARU.',
+    d:'Solo para los países del MERCOSUR y Chile.',
+    answer:'b',
+    hint:'El IARP es un acuerdo regional específico de las Américas, no es universal.',
+    explanation:'El IARP es válido únicamente para los países americanos que han firmado y ratificado el acuerdo como signatarios. No aplica automáticamente a todos los países de América.'},
+  {id:'R51',text:'¿Qué indica el prefijo de un indicativo de llamada de radioaficionado?',
+    a:'El país al que pertenece la estación.',
+    b:'La categoría del radioaficionado.',
+    c:'La región geográfica dentro del país.',
+    d:'La antigüedad del radioaficionado en el servicio.',
+    answer:'a',
+    hint:'El prefijo es la parte inicial del indicativo: identifica siempre el país de la estación.',
+    explanation:'El prefijo del indicativo de llamada identifica el país al que pertenece la estación. En el caso de Argentina, los prefijos son LU y LW, asignados por la UIT.'},
+  {id:'R52',text:'¿Cuáles son los prefijos asignados a Argentina por la UIT para el Servicio de Radioaficionados?',
+    a:'LU y LW.',
+    b:'LA y LS.',
+    c:'L2 y L3.',
+    d:'AR y ARG.',
+    answer:'a',
+    hint:'Son dos prefijos de dos letras que comienzan con "L": el primero es el más conocido e histórico.',
+    explanation:'Argentina tiene asignados por la UIT los prefijos LU y LW para el Servicio de Radioaficionados. LU es el más tradicional; LW fue asignado posteriormente al agotarse combinaciones disponibles con LU.'},
+  {id:'R53',text:'¿Cuántas letras tiene el sufijo de los indicativos de aficionados de categoría Superior y Especial en Argentina?',
+    a:'Una sola letra.',
+    b:'Dos letras.',
+    c:'Tres letras.',
+    d:'Cuatro letras.',
+    answer:'b',
+    hint:'Los indicativos de categorías altas tienen sufijos más cortos, lo que los hace fáciles de reconocer.',
+    explanation:'Los radioaficionados de categorías Superior y Especial en Argentina tienen indicativos con sufijo de dos letras (p.ej. LU1AB), mientras que los de categorías inferiores tienen sufijos de tres letras (p.ej. LU7ABC).'},
+  {id:'R54',text:'¿Cuántos años de antigüedad se requieren para solicitar una Señal Distintiva Especial en Argentina?',
+    a:'2 años en la categoría actual.',
+    b:'5 años como radioaficionado.',
+    c:'10 años como radioaficionado.',
+    d:'No hay requisito de antigüedad.',
+    answer:'a',
+    hint:'No es mucho tiempo: basta con 2 años manteniendo la licencia activa en la categoría actual.',
+    explanation:'Para solicitar una Señal Distintiva Especial, el radioaficionado debe tener al menos 2 años de antigüedad en su categoría actual, además de cumplir con los requisitos de categoría correspondientes.'},
+  {id:'R55',text:'¿Cuál es la categoría mínima requerida para ser Instructor de radioaficionados?',
+    a:'Novicio.',
+    b:'General.',
+    c:'Superior.',
+    d:'Especial.',
+    answer:'b',
+    hint:'Se requiere tener los conocimientos de la categoría intermedia para poder enseñar a los aspirantes.',
+    explanation:'Para ser Instructor de radioaficionados, el reglamento exige poseer al menos la categoría General. La categoría Novicio no tiene el nivel de conocimientos suficiente para impartir instrucción oficial.'},
+  {id:'R56',text:'¿Puede un Instructor de radioaficionados examinar a sus propios familiares directos?',
+    a:'Sí, siempre que el examen sea presenciado por un veedor.',
+    b:'No, está expresamente prohibido que un Instructor examine a sus familiares directos.',
+    c:'Solo si los familiares viven en una localidad diferente.',
+    d:'Solo si otro Instructor co-firma el acta de examen.',
+    answer:'b',
+    hint:'Hay un conflicto de interés evidente: el reglamento lo prohíbe para garantizar la objetividad.',
+    explanation:'El reglamento prohíbe expresamente que un Instructor examine a sus propios familiares directos, para evitar conflictos de interés y garantizar la objetividad e integridad del proceso de examen.'},
+  {id:'R57',text:'¿Cuántos meses tiene de validez un certificado de aprobación de examen de radioaficionado antes de que se emita la licencia?',
+    a:'3 meses.',
+    b:'6 meses.',
+    c:'12 meses.',
+    d:'24 meses.',
+    answer:'b',
+    hint:'Medio año: tiempo suficiente para gestionar los trámites administrativos de la licencia.',
+    explanation:'El certificado de aprobación del examen tiene una validez de 6 meses. Si la licencia no se tramita dentro de ese plazo, el candidato debe rendir el examen nuevamente.'},
+  {id:'R58',text:'¿Puede una persona que aprobó el examen de radioaficionado comenzar a transmitir antes de recibir su licencia?',
+    a:'Sí, el certificado de examen aprobado es suficiente para comenzar a transmitir.',
+    b:'No, debe esperar a tener la licencia en su poder para poder transmitir legalmente.',
+    c:'Sí, puede transmitir con la supervisión de un radioaficionado titular.',
+    d:'Solo puede transmitir en bandas de VHF/UHF mientras espera la licencia.',
+    answer:'b',
+    hint:'La aprobación del examen es un paso necesario, pero no suficiente: se necesita la licencia oficial.',
+    explanation:'Aprobar el examen no habilita por sí solo a operar. El titular debe esperar a tener la licencia emitida por el ENACOM en su poder para comenzar a transmitir legalmente.'},
+  {id:'R59',text:'¿Qué tipo de conocimiento de telegrafía (código Morse) debe acreditar un aspirante a la categoría Novicio?',
+    a:'Solo conocimiento teórico del código Morse, sin necesidad de demostrar habilidad práctica.',
+    b:'Envío y recepción práctica a 5 palabras por minuto.',
+    c:'Envío y recepción práctica a 12 palabras por minuto.',
+    d:'No se requiere ningún conocimiento de código Morse para la categoría Novicio.',
+    answer:'a',
+    hint:'Para Novicio no se exige práctica de Morse: solo entender el sistema teóricamente.',
+    explanation:'Para la categoría Novicio, el reglamento argentino solo exige conocimiento teórico del código Morse (qué es, cómo funciona, el alfabeto). No se requiere demostrar habilidad práctica de envío o recepción.'},
+  {id:'R60',text:'¿Cuál es el orden correcto de sanciones que puede aplicar el ENACOM ante infracciones del reglamento?',
+    a:'Llamado de atención → Apercibimiento → Sanción económica → Suspensión de licencia → Cancelación de licencia.',
+    b:'Apercibimiento → Llamado de atención → Suspensión → Cancelación → Sanción económica.',
+    c:'Sanción económica → Suspensión → Cancelación → Apercibimiento.',
+    d:'Suspensión → Sanción económica → Apercibimiento → Cancelación.',
+    answer:'a',
+    hint:'El orden va de menor a mayor gravedad, comenzando con el aviso informal y terminando con la cancelación definitiva.',
+    explanation:'Las sanciones se aplican en orden creciente: llamado de atención, apercibimiento, sanción económica, suspensión de licencia y cancelación de licencia. Las infracciones reiteradas escalan al siguiente nivel.'},
+  {id:'R61',text:'¿Qué tipo de emisión corresponde al código "A3E"?',
+    a:'Modulación de amplitud (AM) con doble banda lateral y portadora completa: la AM clásica de voz.',
+    b:'Telegrafía por manipulación de portadora sin modulación de audio.',
+    c:'Banda lateral única (SSB) con portadora suprimida.',
+    d:'Modulación de frecuencia (FM) de banda angosta.',
+    answer:'a',
+    hint:'"A" indica AM, "3" indica audio analógico (telefonía), "E" indica doble banda lateral con portadora completa.',
+    explanation:'A3E es el código UIT para la modulación de amplitud convencional (AM) con doble banda lateral y portadora completa: la "AM clásica" usada en radiodifusión AM y en algunas comunicaciones de radioaficionados.'},
+  {id:'R62',text:'¿Qué tipo de emisión corresponde al código "A1A"?',
+    a:'Modulación de amplitud con audio modulado de banda angosta.',
+    b:'Emisión de telefonía AM con una sola banda lateral.',
+    c:'Telegrafía por manipulación de portadora no modulada (CW – código Morse).',
+    d:'Transmisión de datos digitales por modulación de amplitud.',
+    answer:'c',
+    hint:'"A" es amplitud, "1" es telegrafía por manipulación directa de la portadora, "A" final es código Morse.',
+    explanation:'A1A es el código UIT para la telegrafía convencional (CW – Continuous Wave): se manipula la portadora de AM al ritmo del código Morse. Es el modo más básico y eficiente de comunicación por radio.'},
+  {id:'R63',text:'¿Qué tipo de emisión corresponde al código "J3E"?',
+    a:'Modulación de amplitud convencional (AM) con doble banda lateral.',
+    b:'Banda lateral única (SSB) con portadora suprimida, modo de telefonía.',
+    c:'Modulación de frecuencia (FM) de banda angosta para telefonía.',
+    d:'Emisión de datos digitales por modulación de fase.',
+    answer:'b',
+    hint:'"J" indica BLU con portadora suprimida; "3" indica audio analógico; "E" indica telefonía.',
+    explanation:'J3E es el código UIT para la Banda Lateral Única (SSB) con portadora suprimida, usada para comunicaciones de voz. Es el modo más eficiente en HF por su uso económico del espectro y la potencia.'},
+  {id:'R64',text:'¿Qué tipo de emisión corresponde al código "F3E"?',
+    a:'Modulación de amplitud con portadora suprimida.',
+    b:'Emisión telegráfica por modulación de frecuencia.',
+    c:'Modulación de frecuencia (FM) con información de audio analógico, modo de telefonía.',
+    d:'Modulación de fase con información digital de alta velocidad.',
+    answer:'c',
+    hint:'"F" indica modulación de frecuencia; "3" indica audio analógico (telefonía); "E" indica telefonía.',
+    explanation:'F3E es el código UIT para la Modulación de Frecuencia (FM) con audio analógico. Es el modo dominante en VHF/UHF en radioaficionados, utilizado en comunicaciones locales y a través de repetidoras.'},
+  {id:'R65',text:'El código de emisión "J3E" corresponde al modo de operación denominado:',
+    a:'SSB (Banda Lateral Única).',
+    b:'CW (Onda Continua / Morse).',
+    c:'FM (Modulación de Frecuencia).',
+    d:'AM (Modulación de Amplitud convencional).',
+    answer:'a',
+    hint:'J3E es la designación UIT para el modo más usado en HF para comunicaciones de voz eficientes.',
+    explanation:'J3E corresponde al modo SSB (Single Side Band – Banda Lateral Única) con portadora suprimida. Es el modo de voz más usado en las bandas de HF por los radioaficionados de todo el mundo.'},
+  {id:'R66',text:'El código de emisión "A1A" corresponde al modo de operación denominado:',
+    a:'SSB (Banda Lateral Única).',
+    b:'CW (Onda Continua / telegrafía Morse).',
+    c:'FM (Modulación de Frecuencia).',
+    d:'RTTY (Radiotelegrafía digital).',
+    answer:'b',
+    hint:'A1A es la manipulación directa de la portadora AM: el modo telegráfico clásico del radioaficionado.',
+    explanation:'A1A corresponde al modo CW (Continuous Wave), la telegrafía por código Morse mediante manipulación de la portadora. Es el modo más antiguo de radio y sigue siendo muy popular entre radioaficionados.'},
+  {id:'R67',text:'El código de emisión "F3E" corresponde al modo de operación denominado:',
+    a:'SSB (Banda Lateral Única).',
+    b:'FM (Modulación de Frecuencia) de voz.',
+    c:'CW (Código Morse).',
+    d:'APRS (Sistema de Reporte de Posición Automático).',
+    answer:'b',
+    hint:'F3E es la designación UIT para el modo predominante en VHF/UHF: comunicaciones de voz locales.',
+    explanation:'F3E corresponde a FM (Modulación de Frecuencia) con audio analógico (telefonía). Es el modo utilizado en VHF y UHF para comunicaciones locales y a través de repetidoras.'},
+  {id:'R68',text:'¿Qué tipo de emisión corresponde al código "F1B"?',
+    a:'Modulación de frecuencia de audio analógico (FM de voz).',
+    b:'Telegrafía digital por manipulación de portadora FM.',
+    c:'RTTY (Radio Teletype): transmisión de datos digitales por desplazamiento de frecuencia (FSK).',
+    d:'Modulación de amplitud para transmisión de imagen fija.',
+    answer:'c',
+    hint:'"F" es modulación de frecuencia, "1" es telegrafía, "B" es telegrafía automática (teletype).',
+    explanation:'F1B es el código UIT para RTTY (Radio Teletype): transmisión digital de texto usando desplazamiento de frecuencia (FSK). Es un modo digital clásico muy usado en HF por radioaficionados.'},
+  {id:'R69',text:'¿Qué protección tiene el Servicio de Radioaficionados cuando opera como servicio secundario en una banda?',
+    a:'Tiene plena protección contra interferencias de cualquier servicio, primario o secundario.',
+    b:'No tiene ningún tipo de protección: cualquier servicio puede interferirlo sin consecuencias.',
+    c:'Solo puede reclamar protección contra interferencias de otros servicios secundarios; no tiene protección frente al servicio primario.',
+    d:'Tiene protección frente al servicio primario pero no frente a otros servicios secundarios.',
+    answer:'c',
+    hint:'En la jerarquía del espectro, lo secundario se protege solo horizontalmente, no verticalmente hacia arriba.',
+    explanation:'Cuando opera como secundario, el Servicio de Radioaficionados no puede causar interferencia perjudicial al servicio primario ni reclamar protección frente a él. Sí puede reclamar protección frente a otros servicios secundarios.'},
+  {id:'R70',text:'¿Puede un radioaficionado de categoría Novicio operar en toda la banda de 15 metros (21 MHz)?',
+    a:'Sí, tiene acceso completo a toda la banda de 15 metros.',
+    b:'No, solo puede operar en algunos segmentos específicos de la banda de 15 metros.',
+    c:'No, no tiene acceso a la banda de 15 metros bajo ninguna circunstancia.',
+    d:'Sí, pero solo en modo CW.',
+    answer:'b',
+    hint:'La categoría Novicio tiene acceso restringido a segmentos específicos en varias bandas, no a toda la banda.',
+    explanation:'Un Novicio no tiene acceso a toda la banda de 15 metros: solo puede operar en determinados segmentos específicos según el Plan de Bandas para la categoría Novicio.'},
+  {id:'R71',text:'¿Puede un radioaficionado Novicio operar en el segmento 14.000-14.070 MHz (banda de 20 metros)?',
+    a:'No, ese segmento está reservado para categorías superiores (General, Superior, Especial).',
+    b:'Sí, puede operar en ese segmento en modo CW.',
+    c:'Sí, puede operar en cualquier modo autorizado en ese segmento.',
+    d:'Solo puede escuchar en ese segmento, no transmitir.',
+    answer:'a',
+    hint:'El segmento 14.000-14.070 MHz es de CW exclusivo y está restringido a categorías superiores.',
+    explanation:'El segmento 14.000-14.070 MHz de la banda de 20 metros no está habilitado para la categoría Novicio en el Plan de Bandas argentino. Está reservado para categorías superiores.'},
+  {id:'R72',text:'¿Tiene habilitada la banda de 30 metros (10.100-10.150 MHz) un radioaficionado Novicio?',
+    a:'Sí, con potencia máxima de 100 W.',
+    b:'Sí, pero solo en modo digital.',
+    c:'No, la banda de 30 metros no está habilitada para la categoría Novicio.',
+    d:'Solo en segmentos específicos de la banda de 30 metros.',
+    answer:'c',
+    hint:'La banda de 30 metros tiene restricciones especiales y el Novicio no tiene acceso.',
+    explanation:'La banda de 30 metros (10.100-10.150 MHz) no está habilitada para la categoría Novicio en el Plan de Bandas argentino. Esta banda tiene restricciones particulares y solo está disponible para categorías superiores.'},
+  {id:'R73',text:'¿Cuál es la potencia máxima autorizada para un Novicio en la banda de 2200 metros (135,7-137,8 kHz)?',
+    a:'1 W de potencia irradiada isotrópica equivalente (PIRE).',
+    b:'5 W PEP.',
+    c:'10 W PEP.',
+    d:'25 W PEP.',
+    answer:'a',
+    hint:'La banda de 2200 metros es una banda de muy baja frecuencia con restricciones de potencia muy bajas.',
+    explanation:'En la banda de 2200 metros (135,7-137,8 kHz), la potencia máxima autorizada es de 1 W de PIRE (Potencia Irradiada Isotrópica Equivalente), válida tanto para Novicio como para otras categorías.'},
+  {id:'R74',text:'¿Cuál es la potencia máxima autorizada para un Novicio en la banda de 630 metros (472-479 kHz)?',
+    a:'1 W PEP.',
+    b:'5 W PIRE.',
+    c:'50 W PEP.',
+    d:'100 W PEP.',
+    answer:'b',
+    hint:'La banda de 630 metros tiene una potencia máxima baja: 5 vatios irradiados isotrópicamente.',
+    explanation:'En la banda de 630 metros (472-479 kHz), la potencia máxima autorizada es de 5 W PIRE (Potencia Irradiada Isotrópica Equivalente), tanto para Novicio como para otras categorías.'},
+  {id:'R75',text:'¿Cuál es la potencia máxima autorizada para un Novicio en la banda de 60 metros (5,3515-5,3665 MHz)?',
+    a:'25 W PEP en la frecuencia del canal designado.',
+    b:'50 W PEP.',
+    c:'100 W PEP.',
+    d:'200 W PEP.',
+    answer:'a',
+    hint:'La banda de 60 metros tiene potencia reducida y opera en canales específicos, no en toda la banda.',
+    explanation:'En la banda de 60 metros (5,3515-5,3665 MHz), la potencia máxima es de 25 W PEP en la frecuencia del canal designado. Además, en esta banda solo se permite el modo J3E (USB).'},
+  {id:'R76',text:'¿Cuál es el status del Servicio de Radioaficionados en la banda de 80 metros (3,5-3,9 MHz) en Argentina?',
+    a:'Servicio primario en toda la banda.',
+    b:'Servicio secundario en toda la banda.',
+    c:'Primario en algunos segmentos y secundario en otros, según el Plan Nacional de Frecuencias.',
+    d:'No tiene asignación en esa banda.',
+    answer:'c',
+    hint:'La condición primaria/secundaria puede variar según el segmento dentro de la misma banda.',
+    explanation:'En la banda de 80 metros, el Servicio de Radioaficionados argentino tiene status primario en algunos segmentos y secundario en otros, según las asignaciones del Plan Nacional de Frecuencias.'},
+  {id:'R77',text:'¿Cuál es el ancho de banda máximo autorizado para modos digitales en las bandas de 2 metros y 10 metros para un Novicio?',
+    a:'Hasta 8 kHz.',
+    b:'Hasta 16 kHz.',
+    c:'Hasta 25 kHz.',
+    d:'Sin límite de ancho de banda.',
+    answer:'b',
+    hint:'En estas bandas VHF/UHF el ancho máximo para modos digitales es un valor intermedio.',
+    explanation:'El Plan de Bandas para la categoría Novicio autoriza modos digitales con un ancho de banda máximo de 16 kHz en las bandas de 2 metros y 10 metros.'},
+  {id:'R78',text:'¿Cuál es el ancho de banda máximo autorizado para emisiones en las bandas de 40 metros y 80 metros para la categoría Novicio?',
+    a:'Hasta 3 kHz.',
+    b:'Hasta 6 kHz.',
+    c:'Hasta 16 kHz.',
+    d:'Hasta 25 kHz.',
+    answer:'a',
+    hint:'En las bandas de HF el ancho de banda está limitado para no causar interferencia a las estaciones vecinas.',
+    explanation:'El Plan de Bandas para la categoría Novicio limita el ancho de banda máximo a 3 kHz en las bandas de 40 metros y 80 metros, compatible con los modos de voz (SSB/AM) y CW.'},
+  {id:'R79',text:'¿Qué tipo de operación puede realizar un radioaficionado Novicio en la banda de 17 metros (18,068-18,168 MHz)?',
+    a:'Cualquier modo autorizado para su categoría en esa banda.',
+    b:'Solo CW y SSB, no modos digitales.',
+    c:'Solo operación de radiobaliza, sin comunicaciones punto a punto.',
+    d:'No tiene acceso a la banda de 17 metros.',
+    answer:'c',
+    hint:'La restricción en 17 metros para Novicio es muy específica: solo un tipo de operación muy particular.',
+    explanation:'En la banda de 17 metros (18,068-18,168 MHz), el radioaficionado Novicio solo puede realizar operación de radiobaliza; no está habilitado para comunicaciones punto a punto en esa banda.'},
+  {id:'R80',text:'¿Qué significa que un segmento de banda esté asignado con un modo "exclusivo" en el Plan de Bandas?',
+    a:'Que cualquier radioaficionado puede usar ese segmento con exclusividad sobre otros servicios.',
+    b:'Que en ese segmento solo puede usarse el modo específicamente indicado, sin combinar con otros modos.',
+    c:'Que ese segmento es de uso exclusivo para comunicaciones de emergencia.',
+    d:'Que solo radioaficionados de categoría Especial pueden usar ese segmento.',
+    answer:'b',
+    hint:'Exclusivo significa exactamente eso: un único modo permitido en ese segmento.',
+    explanation:'Cuando el Plan de Bandas indica que un segmento tiene un modo "exclusivo", significa que en ese segmento solo puede usarse ese modo específico. No pueden combinarse otros modos en ese segmento.'},
+  {id:'R81',text:'¿Puede un radioaficionado usar modulación de amplitud convencional (A3E) en la banda de 3 centímetros (9,3-10,5 GHz)?',
+    a:'Sí, sin restricción de modo en esa banda.',
+    b:'Sí, pero solo con portadora reducida.',
+    c:'Solo en modos de banda lateral única.',
+    d:'No, la AM convencional (A3E) no está autorizada en esa banda según el Plan de Bandas.',
+    answer:'d',
+    hint:'La banda de 3 cm tiene restricciones de modo: no todos los modos están permitidos.',
+    explanation:'La AM convencional (A3E) no está autorizada en la banda de 3 centímetros (9,3-10,5 GHz) según el Plan de Bandas. En esa banda existen restricciones específicas de modo de emisión.'},
+  {id:'R82',text:'¿En qué segmento de la banda de 23 centímetros (1240-1300 MHz) está autorizado el enlace tierra-espacio para radioaficionados en Argentina?',
+    a:'1240-1250 MHz.',
+    b:'1260-1270 MHz.',
+    c:'1270-1290 MHz.',
+    d:'1290-1300 MHz.',
+    answer:'b',
+    hint:'Es un segmento específico de 10 MHz dentro de la banda de 23 cm destinado a comunicaciones tierra-espacio.',
+    explanation:'El segmento 1260-1270 MHz de la banda de 23 centímetros está designado para el enlace tierra-espacio (uplink satelital) en el Servicio de Radioaficionados en Argentina.'}
+];
+
+// ═══════════════════════════════════════════════════════════════
+//  APP STATE
+// ═══════════════════════════════════════════════════════════════
+let examMode        = 'tecnica';
+let examQuestions   = [];
+let totalQuestions  = 15;
+let currentIndex    = 0;
+let score           = 0;
+let wrong           = 0;
+let tecnicaScore    = 0;
+let reglamScore     = 0;
+let selectedOpt     = null;
+let confirmed       = false;
+let failedQuestions = [];
+
+// ── helpers ──────────────────────────────────────────────────
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// ── mode selection ────────────────────────────────────────────
+function selectMode(mode) {
+  examMode = mode;
+  startExam();
+}
+
+// ── start ─────────────────────────────────────────────────────
+function startExam() {
+  currentIndex    = 0;
+  score           = 0;
+  wrong           = 0;
+  tecnicaScore    = 0;
+  reglamScore     = 0;
+  failedQuestions = [];
+  document.getElementById('overlay-dog').classList.add('hidden');
+  document.getElementById('confetti-wrap').innerHTML = '';
+
+  if (examMode === 'tecnica') {
+    examQuestions  = shuffle(QUESTIONS).slice(0, 15);
+    totalQuestions = 15;
+  } else if (examMode === 'reglam') {
+    examQuestions  = shuffle(QUESTIONS_REGLAM).slice(0, 15);
+    totalQuestions = 15;
+  } else {
+    const t = shuffle(QUESTIONS).slice(0, 15).map(q => ({...q, _cat:'tecnica'}));
+    const r = shuffle(QUESTIONS_REGLAM).slice(0, 15).map(q => ({...q, _cat:'reglam'}));
+    examQuestions  = [...t, ...r];
+    totalQuestions = 30;
+  }
+
+  show('screen-quiz');
+  renderQuestion();
+}
+
+// ── render ────────────────────────────────────────────────────
+function renderQuestion() {
+  const q   = examQuestions[currentIndex];
+  const num = currentIndex + 1;
+  selectedOpt = null;
+  confirmed   = false;
+
+  // progress
+  const pct = ((num - 1) / totalQuestions) * 100;
+  document.getElementById('progress-bar').style.width  = pct + '%';
+  document.getElementById('progress-text').textContent = `Pregunta ${num} de ${totalQuestions}`;
+  document.getElementById('score-text').textContent    = `✓ ${score} | ✗ ${wrong}`;
+
+  // category tag (only in complete mode)
+  const numEl = document.getElementById('q-number');
+  if (examMode === 'completo') {
+    const cat   = q._cat || 'tecnica';
+    const label = cat === 'tecnica' ? 'TÉCNICA' : 'REGLAMENTACIÓN';
+    numEl.innerHTML = `<span class="category-tag ${cat}">${label}</span>`;
+  } else {
+    numEl.innerHTML = '';
+  }
+
+  // question text
+  document.getElementById('q-text').textContent = q.text;
+
+  // options
+  const optWrap = document.getElementById('q-options');
+  optWrap.innerHTML = '';
+  ['a','b','c','d'].forEach(letter => {
+    const lbl = document.createElement('label');
+    lbl.className = 'option-label';
+    lbl.dataset.letter = letter;
+    lbl.innerHTML = `
+      <input type="radio" name="opt" value="${letter}">
+      <span class="option-letter">${letter.toUpperCase()}</span>
+      <span>${q[letter]}</span>`;
+    lbl.addEventListener('click', () => selectOption(letter));
+    optWrap.appendChild(lbl);
+  });
+
+  // hint
+  document.getElementById('hint-text').style.display = 'none';
+  document.getElementById('hint-text').textContent   = q.hint;
+  document.getElementById('btn-hint').textContent    = '💡 Ver Pista';
+
+  // feedback
+  const fb = document.getElementById('feedback-box');
+  fb.style.display = 'none';
+  fb.className = 'feedback-box';
+
+  // buttons
+  document.getElementById('btn-confirm').disabled   = true;
+  document.getElementById('btn-next').style.display = 'none';
+}
+
+function selectOption(letter) {
+  if (confirmed) return;
+  selectedOpt = letter;
+  document.querySelectorAll('.option-label').forEach(lbl => {
+    lbl.classList.toggle('selected', lbl.dataset.letter === letter);
+  });
+  document.getElementById('btn-confirm').disabled = false;
+}
+
+// ── confirm ───────────────────────────────────────────────────
+function confirmAnswer() {
+  if (!selectedOpt || confirmed) return;
+  confirmed = true;
+
+  const q       = examQuestions[currentIndex];
+  const correct = q.answer;
+  const isRight = selectedOpt === correct;
+
+  if (isRight) {
+    score++;
+    if (examMode === 'completo') {
+      if (q._cat === 'reglam') reglamScore++;
+      else tecnicaScore++;
+    }
+  } else {
+    wrong++;
+    failedQuestions.push({ q, chosen: selectedOpt });
+  }
+
+  // style options
+  document.querySelectorAll('.option-label').forEach(lbl => {
+    const l = lbl.dataset.letter;
+    lbl.style.pointerEvents = 'none';
+    if (l === correct)                    lbl.classList.add(isRight && l === selectedOpt ? 'correct' : 'show-correct');
+    if (l === selectedOpt && !isRight)    lbl.classList.add('incorrect');
+  });
+
+  // feedback
+  const fb = document.getElementById('feedback-box');
+  fb.style.display = 'block';
+  if (isRight) {
+    fb.className = 'correct-fb';
+    fb.innerHTML = `<div class="fb-title">✅ ¡Correcto!</div>${q.explanation}`;
+  } else {
+    fb.className = 'incorrect-fb';
+    fb.innerHTML = `<div class="fb-title">❌ Incorrecto</div>La respuesta correcta es la opción <strong>${correct.toUpperCase()}</strong>.<br>${q.explanation}`;
+  }
+
+  document.getElementById('score-text').textContent = `✓ ${score} | ✗ ${wrong}`;
+
+  document.getElementById('btn-confirm').disabled   = true;
+  const btnNext = document.getElementById('btn-next');
+  btnNext.style.display = 'block';
+  btnNext.textContent   = currentIndex < totalQuestions - 1 ? 'Siguiente →' : 'Ver Resultados';
+}
+
+// ── next ──────────────────────────────────────────────────────
+function nextQuestion() {
+  currentIndex++;
+  if (currentIndex < totalQuestions) {
+    renderQuestion();
+  } else {
+    showResults();
+  }
+}
+
+// ── hint ──────────────────────────────────────────────────────
+function toggleHint() {
+  const h   = document.getElementById('hint-text');
+  const btn = document.getElementById('btn-hint');
+  if (h.style.display === 'none' || h.style.display === '') {
+    h.style.display = 'block';
+    btn.textContent = '🙈 Ocultar Pista';
+  } else {
+    h.style.display = 'none';
+    btn.textContent = '💡 Ver Pista';
+  }
+}
+
+// ── results ───────────────────────────────────────────────────
+function showResults() {
+  document.getElementById('progress-bar').style.width = '100%';
+
+  const pct = Math.round((score / totalQuestions) * 100);
+  document.getElementById('result-score').textContent = `${score}/${totalQuestions}`;
+  document.getElementById('result-pct').textContent   = `${pct}% de respuestas correctas`;
+  document.getElementById('res-ok').textContent       = score;
+  document.getElementById('res-fail').textContent     = wrong;
+
+  // Category breakdown for complete mode
+  const catEl = document.getElementById('cat-breakdown');
+  if (examMode === 'completo') {
+    catEl.style.display = 'flex';
+    catEl.innerHTML = `
+      <div class="cat-item">
+        <div class="cat-label">🔧 Técnica</div>
+        <div class="cat-score tecnica">${tecnicaScore}/15</div>
+      </div>
+      <div class="cat-item">
+        <div class="cat-label">📋 Reglamentación</div>
+        <div class="cat-score reglam">${reglamScore}/15</div>
+      </div>`;
+  } else {
+    catEl.style.display = 'none';
+  }
+
+  let msg = '';
+  if (pct === 100) {
+    msg = '¡Rendimiento PERFECTO! Dominás todos los temas. ¡Estás más que listo para el examen!';
+  } else if (pct >= 80) {
+    msg = '¡Muy buen resultado! Tenés un dominio sólido del material. Repasá los temas donde fallaste.';
+  } else if (pct >= 60) {
+    msg = 'Resultado aceptable. Hay temas que necesitan más repaso. ¡Seguí practicando!';
+  } else {
+    msg = 'Necesitás más práctica. No te desanimes: cada intento te enseña más. ¡Volvé a intentarlo!';
+  }
+  document.getElementById('result-msg').textContent = msg;
+
+  // build failed-questions review
+  const reviewEl = document.getElementById('review-section');
+  if (failedQuestions.length === 0) {
+    reviewEl.innerHTML = '';
+  } else {
+    const items = failedQuestions.map((entry, i) => {
+      const { q, chosen } = entry;
+      const catTag = q._cat
+        ? `<span class="category-tag ${q._cat}" style="font-size:0.65rem;margin-bottom:4px;display:inline-block">${q._cat === 'tecnica' ? 'TÉCNICA' : 'REGLAMENTACIÓN'}</span><br>`
+        : '';
+      return `
+        <div class="review-item">
+          <div class="review-num">${catTag}Pregunta incorrecta ${i + 1} · (N° ${q.id} del banco)</div>
+          <div class="review-q-text">${q.text}</div>
+          <div class="review-your">✗ Tu respuesta: <strong>${chosen.toUpperCase()}) ${q[chosen]}</strong></div>
+          <div class="review-correct">✓ Respuesta correcta: <strong>${q.answer.toUpperCase()}) ${q[q.answer]}</strong></div>
+          <div class="review-explanation">${q.explanation}</div>
+        </div>`;
+    }).join('');
+    reviewEl.innerHTML = `
+      <div class="review-title">📋 Repaso de preguntas incorrectas (${failedQuestions.length})</div>
+      ${items}`;
+  }
+
+  show('screen-result');
+
+  if (pct === 100) {
+    setTimeout(showDog, 600);
+  }
+}
+
+// ── golden dog ────────────────────────────────────────────────
+function showDog() {
+  document.getElementById('congrats-sub').innerHTML =
+    `¡${totalQuestions} de ${totalQuestions}! ¡Sos un genio! 🥇<br>¡El perrito dorado es tuyo!`;
+  spawnConfetti();
+  document.getElementById('overlay-dog').classList.remove('hidden');
+}
+
+function closeOverlay() {
+  document.getElementById('overlay-dog').classList.add('hidden');
+  document.getElementById('confetti-wrap').innerHTML = '';
+  show('screen-start');
+}
+
+function spawnConfetti() {
+  const wrap   = document.getElementById('confetti-wrap');
+  const colors = ['#fbbf24','#f59e0b','#fde68a','#fff','#fb923c','#34d399','#60a5fa','#f472b6'];
+  wrap.innerHTML = '';
+  for (let i = 0; i < 80; i++) {
+    const p = document.createElement('div');
+    p.className = 'confetti-piece';
+    const size = Math.random() * 10 + 5;
+    p.style.cssText = `
+      left:${Math.random()*100}%;
+      width:${size}px;
+      height:${size}px;
+      background:${colors[Math.floor(Math.random()*colors.length)]};
+      border-radius:${Math.random()>0.5?'50%':'2px'};
+      animation-duration:${Math.random()*3+2}s;
+      animation-delay:${Math.random()*2}s;
+    `;
+    wrap.appendChild(p);
+  }
+}
+</script>
+</body>
+</html>
