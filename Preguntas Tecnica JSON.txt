@@ -1,0 +1,1660 @@
+{
+  "exam": {
+    "title": "PREGUNTAS DE EXAMEN PARA INGRESO A CATEGORIA NOVICIO - TECNICA Y ELECTRONICA",
+    "organization": "ENACOM",
+    "language": "es",
+    "totalQuestions": 150,
+    "questions": [
+      {
+        "id": 1,
+        "question": "¿Con qué elemento bloqueamos el paso de una corriente continua entre dos puntos de un circuito?",
+        "options": {
+          "a": "Resistor",
+          "b": "Inductor",
+          "c": "Capacitor",
+          "d": "Termistor"
+        },
+        "correctAnswer": "c"
+      },
+      {
+        "id": 2,
+        "question": "¿Cuál es el cable coaxil menos recomendado para VHF y UHF por sus mayores pérdidas?",
+        "options": {
+          "a": "RG-58",
+          "b": "RG-8",
+          "c": "RG-213",
+          "d": "RG-11"
+        },
+        "correctAnswer": "a"
+      },
+      {
+        "id": 3,
+        "question": "Una resistencia está identificada con los siguientes colores: Rojo-Naranja-Rojo ¿Qué valor tiene?",
+        "options": {
+          "a": "670 K",
+          "b": "230 Ω",
+          "c": "2,3 K",
+          "d": "23 K"
+        },
+        "correctAnswer": "c"
+      },
+      {
+        "id": 4,
+        "question": "La banda de color dorado que se encuentra en un resistor, ¿qué tolerancia indica?",
+        "options": {
+          "a": "5 %",
+          "b": "10 %",
+          "c": "20 %",
+          "d": "30 %"
+        },
+        "correctAnswer": "a"
+      },
+      {
+        "id": 5,
+        "question": "¿En qué unidad se mide la inductancia de una bobina?",
+        "options": {
+          "a": "Faradio",
+          "b": "Joulio",
+          "c": "Henrio",
+          "d": "Coulombio"
+        },
+        "correctAnswer": "c"
+      },
+      {
+        "id": 6,
+        "question": "Enuncie la ley de Ohm:",
+        "options": {
+          "a": "La intensidad de una corriente eléctrica es inversamente proporcional al cuadrado de la diferencia de potencial y directamente proporcional a su resistencia",
+          "b": "La intensidad de una corriente eléctrica es directamente proporcional a la diferencia de potencial entre los extremos del conductor e inversamente proporcional a su resistencia",
+          "c": "La intensidad de una corriente eléctrica es directamente proporcional a su resistencia e inversamente proporcional a la diferencia de potencial entre los extremos del conductor",
+          "d": "La intensidad de una corriente eléctrica es directamente proporcional a su resistencia y directamente proporcional a la diferencia de potencial entre los extremos del conductor"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 7,
+        "question": "¿Cuál es la unidad de medida de la intensidad de corriente?",
+        "options": {
+          "a": "Voltio",
+          "b": "Amperio",
+          "c": "Vatio",
+          "d": "Henrio"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 8,
+        "question": "¿Cuál es la unidad de medida de la tensión?",
+        "options": {
+          "a": "Voltio",
+          "b": "Amperio",
+          "c": "Vatio",
+          "d": "Henrio"
+        },
+        "correctAnswer": "a"
+      },
+      {
+        "id": 9,
+        "question": "Tenemos un circuito con 3 resistencias en serie de 10 Ω cada una, conectadas a una fuente de alimentación de corriente continua con 30 V de tensión. ¿Qué valor de intensidad de corriente eléctrica circula por el circuito?",
+        "options": {
+          "a": "10 Amperio",
+          "b": "100 Amperio",
+          "c": "1 Amperio",
+          "d": "0,1 Amperio"
+        },
+        "correctAnswer": "c"
+      },
+      {
+        "id": 10,
+        "question": "¿Con qué instrumento se mide la tensión en un circuito eléctrico y como se conecta dicho instrumento?",
+        "options": {
+          "a": "Amperímetro. Se conecta en serie",
+          "b": "Voltímetro. Se conecta en serie",
+          "c": "Voltímetro. Se conecta en paralelo",
+          "d": "Amperímetro. Se conecta en paralelo"
+        },
+        "correctAnswer": "c"
+      },
+      {
+        "id": 11,
+        "question": "¿Con qué instrumento se mide la intensidad de corriente en un circuito eléctrico y como se conecta dicho instrumento?",
+        "options": {
+          "a": "Voltímetro. Se conecta en serie",
+          "b": "Amperímetro. Se conecta en paralelo",
+          "c": "Amperímetro. Se conecta en serie",
+          "d": "Amperímetro. Se conecta en paralelo"
+        },
+        "correctAnswer": "c"
+      },
+      {
+        "id": 12,
+        "question": "¿Cuál es la unidad de medida de la potencia eléctrica?",
+        "options": {
+          "a": "Amperio",
+          "b": "Voltio",
+          "c": "Vatio",
+          "d": "Henrio"
+        },
+        "correctAnswer": "c"
+      },
+      {
+        "id": 13,
+        "question": "¿Qué potencia se producirá en una resistencia de 400 Ω, si la tensión aplicada es de 20V?",
+        "options": {
+          "a": "10 Vatio",
+          "b": "100 Vatio",
+          "c": "1 Vatio",
+          "d": "20 Vatio"
+        },
+        "correctAnswer": "c"
+      },
+      {
+        "id": 14,
+        "question": "Se conectan en paralelo tres capacitores de 22, 33 y 5 microfaradios respectivamente. ¿Cuál es la capacidad total del circuito?",
+        "options": {
+          "a": "3 uf",
+          "b": "60 uf",
+          "c": "45 uf",
+          "d": "70 uf"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 15,
+        "question": "¿Qué tipo de antena puede ser una buena elección como parte de un equipo portable parabandas de HF, para ser instalada en caso de emergencia?",
+        "options": {
+          "a": "Quad de 3 elementos",
+          "b": "Yagi de 3 elementos",
+          "c": "Dipolo de 1/2 longitud de onda",
+          "d": "Helicoidal"
+        },
+        "correctAnswer": "c"
+      },
+      {
+        "id": 16,
+        "question": "¿Cuál es el ángulo ideal entre ramas de una antena dipolo tipo \"V\" invertida?",
+        "options": {
+          "a": "135º",
+          "b": "45º",
+          "c": "90º",
+          "d": "180°"
+        },
+        "correctAnswer": "c"
+      },
+      {
+        "id": 17,
+        "question": "En un receptor el demodulador:",
+        "options": {
+          "a": "Produce una señal eléctrica oscilatoria de amplitud y frecuencia fija denominada portadora",
+          "b": "Extrae el mensaje a partir de la señal modulada",
+          "c": "Modifica la amplitud o la frecuencia de la portadora pura, conforme a la señal del mensaje",
+          "d": "Amplifica la señal modulada"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 18,
+        "question": "¿Qué elemento de los señalados, permite elevar por si solo, una tensión alterna?",
+        "options": {
+          "a": "Resistencia",
+          "b": "Transformador",
+          "c": "Diodo",
+          "d": "Impedancia"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 19,
+        "question": "En un transmisor, el modulador:",
+        "options": {
+          "a": "Amplifica la señal proveniente de la antena para que su nivel sea mucho mayor al del ruido interno de las etapas subsiguientes",
+          "b": "Produce una señal eléctrica oscilatoria de amplitud y frecuencia fija denominada portadora",
+          "c": "Modifica la amplitud o frecuencia de la portadora pura, conforme a la señal del mensaje",
+          "d": "Amplifica la señal modulada para enviarla a la antena"
+        },
+        "correctAnswer": "c"
+      },
+      {
+        "id": 20,
+        "question": "El valor máximo de una corriente alterna es de 200 mA. ¿Cuál es su valor eficaz?",
+        "options": {
+          "a": "130 mA",
+          "b": "141,1 mA",
+          "c": "158 mA",
+          "d": "282,8 mA"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 21,
+        "question": "Para proteger un equipo de 220 Voltios y 1 KW de consumo, ¿qué valor de fusible sería conveniente instalar en la línea de alimentación?",
+        "options": {
+          "a": "500 mA",
+          "b": "1 A",
+          "c": "3 A",
+          "d": "6 A"
+        },
+        "correctAnswer": "d"
+      },
+      {
+        "id": 22,
+        "question": "En un capacitor, ¿qué fenómeno se produce entre la tensión y la corriente?",
+        "options": {
+          "a": "La tensión adelanta a la corriente",
+          "b": "La corriente adelanta a la tensión",
+          "c": "La tensión y la corriente están en fase",
+          "d": "La corriente está desfasada 360°"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 23,
+        "question": "¿Cuándo existe resonancia en un circuito?",
+        "options": {
+          "a": "Cuando la reactancia capacitiva es igual a la corriente eléctrica",
+          "b": "Cuando la reactancia inductiva es igual a la tensión aplicada",
+          "c": "Cuando la reactancia capacitiva es igual a la reactancia inductiva",
+          "d": "Cuando la reactancia inductiva es igual a la corriente eléctrica"
+        },
+        "correctAnswer": "c"
+      },
+      {
+        "id": 24,
+        "question": "¿Cómo se denomina el material que separa las placas de un capacitor?",
+        "options": {
+          "a": "Conductor",
+          "b": "Dieléctrico",
+          "c": "Cátodo",
+          "d": "Ánodo"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 25,
+        "question": "¿Los diodos comunes permiten circulación de corriente en ambas direcciones?",
+        "options": {
+          "a": "no",
+          "b": "si",
+          "c": "sólo en fuentes de alimentación",
+          "d": "sólo los diodos zener"
+        },
+        "correctAnswer": "a"
+      },
+      {
+        "id": 26,
+        "question": "¿De qué elemento se compone un puente rectificador?",
+        "options": {
+          "a": "Capacitores",
+          "b": "Diodos",
+          "c": "Fets",
+          "d": "Bobinas"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 27,
+        "question": "¿Qué elementos indispensables componen un transformador?",
+        "options": {
+          "a": "Dos capacitores",
+          "b": "Un capacitor y una bobina",
+          "c": "Dos bobinas",
+          "d": "Una bobina y un diodo"
+        },
+        "correctAnswer": "c"
+      },
+      {
+        "id": 28,
+        "question": "¿Qué elementos indispensables componen una fuente de alimentación típica de 12 Volts c.c. para una estación de radioaficionado?",
+        "options": {
+          "a": "Transformador, Capacitor, regulador y fusible",
+          "b": "Puente de diodos, Regulador, capacitor y fusible",
+          "c": "Transformador, puente de diodos, capacitor, regulador y fusible",
+          "d": "Transformador, resistencias, capacitor y fusible"
+        },
+        "correctAnswer": "c"
+      },
+      {
+        "id": 29,
+        "question": "¿Qué tipo de corriente entrega una fuente de alimentación típica, usada en transceptores?",
+        "options": {
+          "a": "Pulsante",
+          "b": "Continua",
+          "c": "Alterna",
+          "d": "Monofásica"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 30,
+        "question": "¿Cuál es una de las funciones mas importantes que realiza un transistor?",
+        "options": {
+          "a": "Amplificar señales débiles",
+          "b": "Rectificar la tensión de línea",
+          "c": "Regula la frecuencia del oscilador",
+          "d": "Atenuar señales d��biles"
+        },
+        "correctAnswer": "a"
+      },
+      {
+        "id": 31,
+        "question": "¿Cómo se denominan los elementos que conforman un transistor?",
+        "options": {
+          "a": "Ánodo, emisor y grilla",
+          "b": "Placa, pantalla y base",
+          "c": "Colector, base y emisor",
+          "d": "Colector, base y cátodo"
+        },
+        "correctAnswer": "c"
+      },
+      {
+        "id": 32,
+        "question": "Tres capacitores de 6 nf son conectados en serie, ¿qué capacidad presenta el conjunto?",
+        "options": {
+          "a": "1,0 nf",
+          "b": "2,0 nf",
+          "c": "6,0 nf",
+          "d": "18 nf"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 33,
+        "question": "El primario de un transformador tiene 60 espiras el secundario 300 espiras, si aplicamos al primario 12 V c.a., ¿qué tensión tendremos en el secundario?",
+        "options": {
+          "a": "40 V",
+          "b": "50 V",
+          "c": "60 V",
+          "d": "70 V"
+        },
+        "correctAnswer": "d"
+      },
+      {
+        "id": 34,
+        "question": "Se desea utilizar en la banda de 80 mts. una antena dipolo de ½ longitud de onda alimentada en su centro por un cable coaxil de 75 Ω, en la que se midieron los siguientes valores de ROE: En 3500 Khz. ROE=1,1. En 3600 Khz.: ROE=2. En 3700 Khz.: ROE=3. En 3750 Khz.: ROE=4 ¿Qué debemos hacer con dicha antena?",
+        "options": {
+          "a": "Alargarla",
+          "b": "Acortarla",
+          "c": "Aumentar la impedancia del coaxil",
+          "d": "Inclinarla"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 35,
+        "question": "Las señales emitidas en la banda de 80 m:",
+        "options": {
+          "a": "No llegan a refractarse y escapan de la atmósfera",
+          "b": "Se absorben en la capa ionosférica \"D\" durante el mediodía",
+          "c": "Sólo permiten comunicaciones seguras a más de 500 Km debido a la zona de silencio",
+          "d": "Sólo permiten comunicaciones seguras a más de 2000 Km. Debido a la zona de silencio"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 36,
+        "question": "Se dispone de cuatro resistencias (R1= 50 Ω, R2= 10 Ω, R3= 120 Ω y R4= 4700 Ω) conectadas en paralelo a una fuente de alimentación de 12 V. ¿Cuál será la tensión aplicada sobre R4?",
+        "options": {
+          "a": "12 V",
+          "b": "0,0025 V",
+          "c": "47 V",
+          "d": "6 V"
+        },
+        "correctAnswer": "a"
+      },
+      {
+        "id": 37,
+        "question": "Para obtener una buena relación de ROE, ¿qué es conveniente?",
+        "options": {
+          "a": "Alta potencia reflejada y baja potencia incidente",
+          "b": "Baja potencia reflejada y alta potencia incidente",
+          "c": "Alta potencia reflejada y alta potencia incidente",
+          "d": "Baja potencia reflejada y baja potencia incidente"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 38,
+        "question": "Describir en bloque un receptor superheterodino en clase de emisión A3E:",
+        "options": {
+          "a": "Amplificador de RF, Mezclador, Oscilador de RF, Amplificador de FI, Amplificador de Audio y parlante",
+          "b": "Amplificador de RF, Mezclador, Oscilador de RF, Amplificador de FI, Detector, Amplificador de audio y parlante",
+          "c": "Amplificador de RF, mezclador, Amplificador de FI, Detector, Amplificador de audio y parlante",
+          "d": "Amplificador de RF, Detector de producto, Mezclador, Detector, Amplificador de audio y parlante"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 39,
+        "question": "Definición de selectividad:",
+        "options": {
+          "a": "El receptor tiene la capacidad de evitar las interferencias de estaciones potentes y cercanas a la frecuencia de trabajo",
+          "b": "El receptor tiene la capacidad de escuchar las señales muy débiles",
+          "c": "El receptor tiene la capacidad de escuchar las señales muy fuertes",
+          "d": "El receptor tiene la capacidad de bloquear las señales muy débiles"
+        },
+        "correctAnswer": "a"
+      },
+      {
+        "id": 40,
+        "question": "Definición de sensibilidad:",
+        "options": {
+          "a": "El receptor tiene la capacidad de evitar las interferencias de estaciones potentes y cercanas a la frecuencia de trabajo",
+          "b": "El receptor tiene la capacidad de escuchar las señales muy débiles",
+          "c": "El receptor tiene la capacidad de escuchar las señales muy fuertes",
+          "d": "El receptor tiene la capacidad de bloquear las señales muy débiles"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 41,
+        "question": "Describir en bloque un receptor de F3E:",
+        "options": {
+          "a": "Amplificador de RF, mezclador, filtro pasa bajos amplificador de FI. limitador, discriminador de frecuencia, amplificador de audio y parlante",
+          "b": "Amplificador de RF, Mezclador, Oscilador de RF, Amplificador de FI, Detector, Amplificador de audio y parlante",
+          "c": "Amplificador de RF, Detector de producto, Mezclador, Detector, Amplificador de audio y parlante",
+          "d": "Amplificador de RF, Mezclador, Oscilador de RF, Filtro, Amplificador de FI, Limitador, Discriminador de frecuencia, amplificador de audio y parlante"
+        },
+        "correctAnswer": "d"
+      },
+      {
+        "id": 42,
+        "question": "¿Para qué se emplea el amplificador de FI?",
+        "options": {
+          "a": "Para aumentar la ganancia de la primera etapa amplificadora de RF",
+          "b": "Para usarlo como discriminador de frecuencia",
+          "c": "Para obtener ganancia y selectividad",
+          "d": "Para aumentar la ganancia de la ultima etapa amplificadora de AF"
+        },
+        "correctAnswer": "c"
+      },
+      {
+        "id": 43,
+        "question": "¿Qué función cumple el mezclador en un receptor superheterodino?",
+        "options": {
+          "a": "Mezclar la frecuencia de la FI con la de la señal recibida",
+          "b": "Conversión de la señal captada en otra señal de las mismas características pero de frecuencia distinta para que pueda ser filtrada y amplificada con mayor facilidad",
+          "c": "Conversión de la señal captada en otra señal de características totalmente distintas a las dadas",
+          "d": "Ninguna es correcta"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 44,
+        "question": "Se dispone de cuatro resistencias (R1= 50 Ω, R2= 10 Ω, R3= 120 Ω y R4= 4700 Ω) conectadas en paralelo a una fuente de alimentación de 12 V. ¿Cuál será la potencia disipada por la resistencia R1?",
+        "options": {
+          "a": "2,88 Vatio",
+          "b": "1,44 Vatio",
+          "c": "0,72 Vatio",
+          "d": "0,36 Vatio"
+        },
+        "correctAnswer": "a"
+      },
+      {
+        "id": 45,
+        "question": "Defina en bloques, un transmisor de Banda Lateral Unica (J3E):",
+        "options": {
+          "a": "Oscilador de RF, Amplificador de micrófono, filtro, mezclador, amplificador lineal",
+          "b": "Oscilador de RF, Modulador balanceado, Amplificador de micrófono, filtro, mezclador, amplificador lineal",
+          "c": "Amplificador de RF, Mezclador, Oscilador de RF, Filtro, Amplificador de FI, Limitador, Discriminador de frecuencia, amplificador de audio y parlante",
+          "d": "Amplificador de RF, Mezclador, Oscilador de RF, Amplificador de FI, Detector, Amplificador de audio y parlante"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 46,
+        "question": "El ancho de banda ocupado por una emisión J3E aproximadamente es:",
+        "options": {
+          "a": "Aprox. 3 Khz",
+          "b": "Aprox. 6 Khz",
+          "c": "Aprox. 16 Khz",
+          "d": "Aprox. 1,5 Khz"
+        },
+        "correctAnswer": "a"
+      },
+      {
+        "id": 47,
+        "question": "El ancho de banda de una emisión de F3E banda angosta, habitual en la banda de 2 mts. es:",
+        "options": {
+          "a": "Aprox. 6 Khz",
+          "b": "Aprox. 16 Khz",
+          "c": "Aprox. 25 Khz",
+          "d": "Aprox. 3 Khz"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 48,
+        "question": "En clase de emisión F3E:",
+        "options": {
+          "a": "La portadora varía su amplitud con la señal de micrófono",
+          "b": "La señal de micrófono hace variar la frecuencia de la portadora",
+          "c": "La portadora no varía de frecuencia, varían los armónicos",
+          "d": "Se transmite la portadora modulada en frecuencia con tres tonos"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 49,
+        "question": "Disponemos de un transformador cuyo primario es alimentado con 220 V c.a. y tiene 1100 Espiras. El secundario nos deberá suministrar 15 V c.a., cuantas espiras deberá tener?",
+        "options": {
+          "a": "50 espiras",
+          "b": "60 espiras",
+          "c": "75 espiras",
+          "d": "85 espiras"
+        },
+        "correctAnswer": "c"
+      },
+      {
+        "id": 50,
+        "question": "En clase de emisión A1A:",
+        "options": {
+          "a": "La portadora se modula con el micrófono",
+          "b": "Se transmite portadora al ritmo que marca el manipulador",
+          "c": "El manipulador corta la alimentación del amplificador lineal",
+          "d": "Se transmiten tres tonos para modular en amplitud la portadora"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 51,
+        "question": "En clase de emisión J3E:",
+        "options": {
+          "a": "La portadora es modulada por el audio proveniente del amplificador de RF",
+          "b": "La portadora es modulada por el audio proveniente del OFV",
+          "c": "La portadora es modulada por el audio proveniente del amplificador de micrófono",
+          "d": "La señal de micrófono hace variar la frecuencia de la portadora"
+        },
+        "correctAnswer": "c"
+      },
+      {
+        "id": 52,
+        "question": "En clase de emisión A3E:",
+        "options": {
+          "a": "La portadora es modulada en fase",
+          "b": "La portadora es modulada en amplitud",
+          "c": "La portadora es modulada por los armónicos",
+          "d": "La señal de micrófono hace variar la frecuencia de la portadora"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 53,
+        "question": "¿Qué instrumento se utiliza para ver la forma de onda en un circuito eléctrico?",
+        "options": {
+          "a": "Amperímetro",
+          "b": "Formametro",
+          "c": "Osciloscopio",
+          "d": "Ondámetro"
+        },
+        "correctAnswer": "c"
+      },
+      {
+        "id": 54,
+        "question": "¿Qué instrumento se utiliza para medir la potencia de un transmisor?",
+        "options": {
+          "a": "Amperímetro",
+          "b": "Potenciómetro",
+          "c": "Vatímetro",
+          "d": "Medidor de ROE"
+        },
+        "correctAnswer": "c"
+      },
+      {
+        "id": 55,
+        "question": "Para fonía el ancho del mensaje transmitido es:",
+        "options": {
+          "a": "50 hz",
+          "b": "200 hz",
+          "c": "3.000 hz",
+          "d": "20 Khz"
+        },
+        "correctAnswer": "c"
+      },
+      {
+        "id": 56,
+        "question": "¿Qué ventaja tiene una señal de BLU (SSB) con respecto a una señal AM?",
+        "options": {
+          "a": "No se pierde inteligibilidad para pequeños corrimientos en la sintonía",
+          "b": "La cantidad de sonido es superior",
+          "c": "La portadora ayuda a tener un mayor alcance",
+          "d": "El ancho de banda es la mitad y por lo tanto se hace un mejor aprovechamiento del espectro radioeléctrico"
+        },
+        "correctAnswer": "d"
+      },
+      {
+        "id": 57,
+        "question": "¿Con qué instrumento se mide la frecuencia?",
+        "options": {
+          "a": "Amperímetro",
+          "b": "Vatímetro",
+          "c": "Frecuencímetro",
+          "d": "Potenciómetro"
+        },
+        "correctAnswer": "c"
+      },
+      {
+        "id": 58,
+        "question": "El ancho de banda de una señal de BLU (SSB) es:",
+        "options": {
+          "a": "La mitad de la correspondiente al mensaje",
+          "b": "El doble de la correspondiente al mensaje",
+          "c": "Igual de la correspondiente del mensaje",
+          "d": "Igual al valor de la portadora"
+        },
+        "correctAnswer": "c"
+      },
+      {
+        "id": 59,
+        "question": "Cuándo se aplica una tensión de 150 V a un circuito, la corriente medida es de 2,5 A ¿Cuál es la resistencia del circuito?",
+        "options": {
+          "a": "50 Ω",
+          "b": "90 Ω",
+          "c": "375 Ω",
+          "d": "ninguna es correcta"
+        },
+        "correctAnswer": "d"
+      },
+      {
+        "id": 60,
+        "question": "¿Qué intensidad de corriente circula por una resistencia de 5000 Ω si se le aplica 250 V?",
+        "options": {
+          "a": "0,90 A",
+          "b": "10 A",
+          "c": "0,05 A",
+          "d": "0,5 A"
+        },
+        "correctAnswer": "c"
+      },
+      {
+        "id": 61,
+        "question": "Si se conectan en paralelo una resistencia de 500 Ω con otra de 1200 Ω. Cuál es la resistencia total del circuito?",
+        "options": {
+          "a": "353 Ω",
+          "b": "500 Ω",
+          "c": "700 Ω",
+          "d": "1700 Ω"
+        },
+        "correctAnswer": "a"
+      },
+      {
+        "id": 62,
+        "question": "La corriente que circula por una resistencia de 20 k es de 150 mA. ¿Cuál es la caída de tensión que se provoca en ella?",
+        "options": {
+          "a": "2500 V",
+          "b": "3000 V",
+          "c": "000 V",
+          "d": "13333 V"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 63,
+        "question": "¿Qué elemento se utiliza para adaptar una antena dipolo con una línea de alimentación desbalanceada?",
+        "options": {
+          "a": "Transistor",
+          "b": "Diodo",
+          "c": "Balún",
+          "d": "Transmatch"
+        },
+        "correctAnswer": "c"
+      },
+      {
+        "id": 64,
+        "question": "Un dipolo de media onda, ¿cómo irradia?",
+        "options": {
+          "a": "En forma unidireccional",
+          "b": "En forma omnidireccional",
+          "c": "En forma bidireccional",
+          "d": "En forma isotrópica"
+        },
+        "correctAnswer": "c"
+      },
+      {
+        "id": 65,
+        "question": "¿Cuántos elementos se necesitan (como mínimo) para construir una antena del tipo Yagui?",
+        "options": {
+          "a": "1",
+          "b": "2",
+          "c": "3",
+          "d": "4"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 66,
+        "question": "¿Qué función cumple un oscilador?",
+        "options": {
+          "a": "Elimina alguna parte del contenido espectral de una señal, obteniéndose una nueva señal que es una aproximación de la original",
+          "b": "Decrementa la amplitud de una señal manteniendo su forma de onda",
+          "c": "Convierte una señal electromagnética en eléctrica",
+          "d": "Genera internamente señales eléctricas y tiene una salida pero ninguna entrada"
+        },
+        "correctAnswer": "d"
+      },
+      {
+        "id": 67,
+        "question": "¿Cuál es la longitud de onda correspondiente a una frecuencia de 3657 Khz?",
+        "options": {
+          "a": "154,46 m",
+          "b": "94,57 m",
+          "c": "82,03 m",
+          "d": "75,01 m"
+        },
+        "correctAnswer": "c"
+      },
+      {
+        "id": 68,
+        "question": "¿Cuál es la longitud de una antena dipolo de 1/2 onda para operar en 28950 Khz.?",
+        "options": {
+          "a": "5,34 m",
+          "b": "6,23 m",
+          "c": "4,9 m",
+          "d": "9,84 m"
+        },
+        "correctAnswer": "c"
+      },
+      {
+        "id": 69,
+        "question": "¿Cuál es la longitud de una de las ramas del dipolo de 1/2 onda para la frecuencia de 7043 Khz?",
+        "options": {
+          "a": "10,11 m",
+          "b": "9,23 m",
+          "c": "12,56 m",
+          "d": "20,22 m"
+        },
+        "correctAnswer": "a"
+      },
+      {
+        "id": 70,
+        "question": "Un filtro:",
+        "options": {
+          "a": "Genera internamente señales eléctricas, tiene una salida pero ninguna entrada",
+          "b": "Decrementa la amplitud de una señal manteniendo su forma de onda",
+          "c": "Elimina alguna parte del contenido espectral de una señal, obteniéndose una nueva señal que es una aproximación de la original",
+          "d": "Convierte una señal electromagnética en eléctrica"
+        },
+        "correctAnswer": "c"
+      },
+      {
+        "id": 71,
+        "question": "Una antena vertical de 1/4 de onda para la frecuencia de 146 MHz. deberá tener una longitud aproximada de:",
+        "options": {
+          "a": "48,8 cm",
+          "b": "24,4 cm",
+          "c": "97,7 cm",
+          "d": "2 mts"
+        },
+        "correctAnswer": "a"
+      },
+      {
+        "id": 72,
+        "question": "¿Cómo irradia una antena vertical?",
+        "options": {
+          "a": "Unidireccionalmente",
+          "b": "Omnidireccionalmente",
+          "c": "Bidireccionalmente",
+          "d": "Isotrópicamente"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 73,
+        "question": "¿Cómo irradia una antena común, tipo Yagui de 3 elementos?",
+        "options": {
+          "a": "Omnidireccionalmente",
+          "b": "Direccionalmente",
+          "c": "Isotrópicamente",
+          "d": "Con polarización circular"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 74,
+        "question": "Una antena direccional de 3 elementos tipo Yagui, bien construida y optimizada para la banda de VHF. ¿Qué ganancia tiene (respecto antena isotrópica)?",
+        "options": {
+          "a": "Aproximadamente de 3 a 5 dB",
+          "b": "Aproximadamente de 6 a 8 dB",
+          "c": "Aproximadamente de 8 a 10 dB",
+          "d": "Aproximadamente de 9a 11dB"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 75,
+        "question": "Un amplificador:",
+        "options": {
+          "a": "Incrementa la amplitud de una señal manteniendo su forma de onda",
+          "b": "Elimina alguna parte del contenido espectral de una señal, obteniéndose una nueva señal que es una aproximación de la original",
+          "c": "Genera internamente señales eléctricas y tiene una salida pero ninguna entrada",
+          "d": "Convierte una señal eléctrica en electromagnética"
+        },
+        "correctAnswer": "a"
+      },
+      {
+        "id": 76,
+        "question": "El cable coaxil RG-58U tiene una impedancia característica de:",
+        "options": {
+          "a": "50 Ω",
+          "b": "75 Ω",
+          "c": "300 Ω",
+          "d": "600 Ω"
+        },
+        "correctAnswer": "a"
+      },
+      {
+        "id": 77,
+        "question": "Se desea enviar como mensaje un tono de 3 Khz., en una señal de BLU banda inferior (BLI) cuya frecuencia es 3.500 Khz, la frecuencia de la señal modulada estará dada por:",
+        "options": {
+          "a": "Una componente a 3.497 Khz, una componente a 3.500 Khz y una componente a 3.503 Khz",
+          "b": "Una componente a 3.497 Khz y una componente a 3.500 Khz",
+          "c": "Una componente a 3.497 Khz",
+          "d": "Una componente a 3.500 Khz"
+        },
+        "correctAnswer": "c"
+      },
+      {
+        "id": 78,
+        "question": "El cable coaxil RG-8-U y el RG-213U tienen una impedancia característica de:",
+        "options": {
+          "a": "Aproximadamente 50 Ω",
+          "b": "Aproximadamente 75 Ω",
+          "c": "Aproximadamente 300 Ω",
+          "d": "Aproximadamente 600 Ω"
+        },
+        "correctAnswer": "a"
+      },
+      {
+        "id": 79,
+        "question": "Un transmisor en 146 Mhz. alimenta en un extremo una línea coaxil RG-58-U de 100 mts. y en el otro extremo se conecta una antena. Colocándose vatímetros en ambas puntas, ¿qué se verifica?",
+        "options": {
+          "a": "La potencia que llega a la antena es igual a la que sale del transmisor",
+          "b": "La potencia que llega a la antena es menor que la que sale del transmisor",
+          "c": "La potencia que llega a la antena es mayor que la que sale del transmisor",
+          "d": "La potencia que llega a la antena es inversamente proporcional a la que sale del transmisor"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 80,
+        "question": "Cuando se recepcionan dos señales de BLU (SSB) que están en una misma frecuencia:",
+        "options": {
+          "a": "Se cancelan entre sí y se escucha solamente ruido",
+          "b": "Se interferirán y se escuchara un sonido inteligible",
+          "c": "Se escucharan las dos, de acuerdo a la intensidad que se reciben",
+          "d": "La que llegue con mayor intensidad tapara a la otra"
+        },
+        "correctAnswer": "c"
+      },
+      {
+        "id": 81,
+        "question": "¿Qué permite realizar el sintonizador de antena (transmatch)?",
+        "options": {
+          "a": "Amplificar la potencia",
+          "b": "Adaptar impedancias entre transmisor y línea de alimentación",
+          "c": "Adaptar impedancias entre línea de alimentación y antena",
+          "d": "Enfasar dos antenas direccionales"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 82,
+        "question": "¿A qué se le llama I.T.V.?",
+        "options": {
+          "a": "Interferencia de chispas de automotor",
+          "b": "interferencia a teléfonos",
+          "c": "Interferencia a televisores",
+          "d": "Interferencia total en VHF"
+        },
+        "correctAnswer": "c"
+      },
+      {
+        "id": 83,
+        "question": "¿Qué antena tiene mas ganancia en estaciones VHF móviles?",
+        "options": {
+          "a": "1/4 de onda",
+          "b": "5/8 de onda",
+          "c": "Cola de chancho (0 dB)",
+          "d": "1,5 dBi"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 84,
+        "question": "¿Cuál es habitualmente, la impedancia de salida de los transceptores que se comercializan para uso de radioaficionados?",
+        "options": {
+          "a": "75 Ω",
+          "b": "300 Ω",
+          "c": "50 Ω",
+          "d": "35 Ω"
+        },
+        "correctAnswer": "c"
+      },
+      {
+        "id": 85,
+        "question": "Si por error se selecciona la BLI (SLB) en BLU (SSB) para recibir una señal de banda superior:",
+        "options": {
+          "a": "Se escuchará una señal con tonalidad más aguda",
+          "b": "Se escuchara una señal ininteligible",
+          "c": "Se podrá escuchar la señal sin dificultad en caso de estar el receptor en la frecuencia correcta, caso contrario se escuchará la voz distorsionada",
+          "d": "Se escuchará una señal con tonalidad más grave"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 86,
+        "question": "¿Cuál es la impedancia en el centro de una antena dipolo de 1/2 longitud de onda, tipo \"V\" invertida con sus ramas a 90º?",
+        "options": {
+          "a": "75 Ω",
+          "b": "52 Ω",
+          "c": "35 Ω",
+          "d": "125 Ω"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 87,
+        "question": "La frecuencia de trabajo de un transmisor es de 21.000 Khz. ¿Cuál es su frecuencia en MHz.?",
+        "options": {
+          "a": "0,21 MHz",
+          "b": "21 MHz",
+          "c": "210 MHz",
+          "d": "2,1 MHz"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 88,
+        "question": "Un resistor variable es llamado:",
+        "options": {
+          "a": "Potenciómetro",
+          "b": "Capacitor",
+          "c": "Termistor",
+          "d": "Variac"
+        },
+        "correctAnswer": "a"
+      },
+      {
+        "id": 89,
+        "question": "En una antena direccional tipo Yagui de tres elementos, ¿cómo se denominan sus elementos?",
+        "options": {
+          "a": "Director, Balún, Excitado",
+          "b": "Director, Excitado, Reflector",
+          "c": "Director, Excitado, Pasivo",
+          "d": "Director, Activo, Pasivo"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 90,
+        "question": "¿Cuál es la fórmula aproximada de cálculo de una antena vertical de 1/4 de longitud de onda?",
+        "options": {
+          "a": "142,5/Frecuencia (MHz)",
+          "b": "72/Frecuencia (MHz)",
+          "c": "142,5/Velocidad de la luz",
+          "d": "Frecuencia (MHz) / 72"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 91,
+        "question": "La propagación de las ondas de radio por reflexión ionosférica en bandas de HF está influida principalmente por:",
+        "options": {
+          "a": "El ciclo de manchas solares",
+          "b": "La meteorología en el trayecto de la comunicación",
+          "c": "Ninguna de las opciones a) ó b)",
+          "d": "La posición planetaria"
+        },
+        "correctAnswer": "a"
+      },
+      {
+        "id": 92,
+        "question": "¿A qué se denomina polarización de una onda?",
+        "options": {
+          "a": "Al componente de iones positivos y negativos de la misma",
+          "b": "A que la misma llega a los polos",
+          "c": "A la posición relativa (vertical u horizontal) de su campo electromagnético",
+          "d": "A la polaridad (positiva ó negativa) de la señal aplicada"
+        },
+        "correctAnswer": "c"
+      },
+      {
+        "id": 93,
+        "question": "La densidad, composición y altura de las capas ionosféricas:",
+        "options": {
+          "a": "Cambia con la luna y el estado meteorológico",
+          "b": "Cambia con el ciclo solar, la época del año, la hora y la latitud del lugar",
+          "c": "Es permanente y no cambia",
+          "d": "Cambia en relación a la posición planetaria"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 94,
+        "question": "La banda de 80 mts ofrece razonables posibilidades de comunicarse con la Antártida:",
+        "options": {
+          "a": "En invierno y a la media noche",
+          "b": "En cualquier época del año al mediodía",
+          "c": "Las respuestas a) y b) son correctas",
+          "d": "La banda de 80 mts. no ofrece ninguna posibilidad de comunicarse con la Antártida"
+        },
+        "correctAnswer": "a"
+      },
+      {
+        "id": 95,
+        "question": "¿Qué ventajas ofrece el oscilador a cristal de cuarzo sobre otro con inductancia y condensador?",
+        "options": {
+          "a": "Que es un circuito más sencillo",
+          "b": "Que el oscilador de cristal está libre de armónicos y el otro no",
+          "c": "Que su estabilidad de frecuencia es mucho mayor",
+          "d": "Que es mas económico"
+        },
+        "correctAnswer": "c"
+      },
+      {
+        "id": 96,
+        "question": "¿Cómo se propagan usualmente las señales de VHF?",
+        "options": {
+          "a": "Se curvan en la ionosfera",
+          "b": "Se mueven en círculos",
+          "c": "Viajan en línea recta",
+          "d": "Viajan en ángulos rectos"
+        },
+        "correctAnswer": "c"
+      },
+      {
+        "id": 97,
+        "question": "¿Cómo es la frecuencia de una armónica respecto a la frecuencia fundamental?",
+        "options": {
+          "a": "Es apenas algo más alta",
+          "b": "Es apenas algo más baja",
+          "c": "Es exactamente un múltiplo",
+          "d": "Ninguna de las opciones indicadas"
+        },
+        "correctAnswer": "c"
+      },
+      {
+        "id": 98,
+        "question": "Si los extremos de un dipolo de media onda horizontal señalan al Este y al Oeste, ¿en qué dirección irradia la antena?",
+        "options": {
+          "a": "Fundamentalmente de Norte a Sur",
+          "b": "Fundamentalmente de Este a Oeste",
+          "c": "Fundamentalmente de arriba hacia abajo",
+          "d": "En todas direcciones por ser omnidireccional"
+        },
+        "correctAnswer": "a"
+      },
+      {
+        "id": 99,
+        "question": "¿Qué elemento se utiliza para irradiar energía?",
+        "options": {
+          "a": "Líneas de transmisión",
+          "b": "Antena",
+          "c": "Transmisores",
+          "d": "Amplificadores de RF"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 100,
+        "question": "Un transceptor es un equipo:",
+        "options": {
+          "a": "Transmisor especifico",
+          "b": "Que reúne las funciones de transmisor y receptor",
+          "c": "Receptor especifico",
+          "d": "Receptor bibanda"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 101,
+        "question": "El PTT de un equipo es:",
+        "options": {
+          "a": "La etapa de transmisión",
+          "b": "El interruptor que se debe presionar para recibir",
+          "c": "El interruptor que se debe presionar para transmitir",
+          "d": "La fuente de alimentación (Power To Transmiter)"
+        },
+        "correctAnswer": "c"
+      },
+      {
+        "id": 102,
+        "question": "La antena puede ser desconectada del transmisor y operar en vacío:",
+        "options": {
+          "a": "Cuando se quiere hacer comunicados de corta distancia",
+          "b": "Cuando el transmisor esta en clase C",
+          "c": "Nunca",
+          "d": "Cuando se opera en VHF ó UHF"
+        },
+        "correctAnswer": "c"
+      },
+      {
+        "id": 103,
+        "question": "En un receptor, ¿qué etapa está inmediatamente después de la antena?",
+        "options": {
+          "a": "Mezclador",
+          "b": "Amplificador de FI",
+          "c": "Amplificador de RF",
+          "d": "Amplificador de AF"
+        },
+        "correctAnswer": "c"
+      },
+      {
+        "id": 104,
+        "question": "En un transformador reductor, el número de vueltas del primario es:",
+        "options": {
+          "a": "Menor que el secundario",
+          "b": "Mayor que el secundario",
+          "c": "Igual que las del secundario",
+          "d": "La mitad que las del secundario"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 105,
+        "question": "Una señal de BLS (USB) ubicada en los 3.750 Khz., ocupa el sector de frecuencias comprendido entre:",
+        "options": {
+          "a": "3.747 y 3.750 Khz",
+          "b": "3.750 y 3.753 Khz",
+          "c": "3.747 y 3.753 Khz",
+          "d": "3.748 y 3.752 Khz"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 106,
+        "question": "¿Qué ventaja tiene una señal de BLS (USB) con respecto a una señal BLI (LSB)?",
+        "options": {
+          "a": "No pierde inteligibilidad para pequeños corrimientos en la sintonía",
+          "b": "Tiene mucha mayor inmunidad al ruido",
+          "c": "No tiene ninguna ventaja ni desventaja, solo presentan diferencias técnicas en el transmisor y el receptor",
+          "d": "Es más fácil obtener el mensaje a partir de la señal modulada"
+        },
+        "correctAnswer": "c"
+      },
+      {
+        "id": 107,
+        "question": "¿Qué significa la sigla ALC?",
+        "options": {
+          "a": "Control automático de nivel",
+          "b": "Control anual de nivel",
+          "c": "Control manual de audio",
+          "d": "Amplificador lineal controlado"
+        },
+        "correctAnswer": "a"
+      },
+      {
+        "id": 108,
+        "question": "¿Qué relación existe entre la frecuencia y su correspondiente longitud de onda?",
+        "options": {
+          "a": "Son directamente proporcionales, al aumentar una la otra también aumenta",
+          "b": "Son inversamente proporcionales, al aumentar una la otra disminuye",
+          "c": "La frecuencia es directamente proporcional al cuadrado de la longitud de onda",
+          "d": "La frecuencia es directamente proporcional a la mitad de la longitud de onda"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 109,
+        "question": "¿Qué polarización se utiliza habitualmente para la comunicación por repetidoras en la banda de 2 m?",
+        "options": {
+          "a": "Circular",
+          "b": "Vertical",
+          "c": "Horizontal",
+          "d": "Oblicua a 45°"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 110,
+        "question": "¿Qué polarización de antena se utiliza habitualmente para la comunicación de dos estaciones en la banda de VHF y UHF para el modo Banda Lateral Unica?",
+        "options": {
+          "a": "Circular",
+          "b": "Vertical",
+          "c": "Horizontal",
+          "d": "Oblicua a 45°"
+        },
+        "correctAnswer": "c"
+      },
+      {
+        "id": 111,
+        "question": "¿Qué significa la sigla R.O.E.?",
+        "options": {
+          "a": "Relación de polarización Oblicua Espacial",
+          "b": "Red Observadores Espaciales",
+          "c": "Relación de Ondas Especiales",
+          "d": "Relación de Ondas Estacionarias"
+        },
+        "correctAnswer": "d"
+      },
+      {
+        "id": 112,
+        "question": "¿Con qué instrumento medimos la R.O.E.?",
+        "options": {
+          "a": "Frecuencímetro",
+          "b": "Amperímetro",
+          "c": "Medidor de ondas estacionarias",
+          "d": "Osciloscopio"
+        },
+        "correctAnswer": "c"
+      },
+      {
+        "id": 113,
+        "question": "Si se duplica la frecuencia de la corriente que atraviesa una inductancia, ¿qué sucede con la reactancia?",
+        "options": {
+          "a": "Se duplica",
+          "b": "Se reduce a la mitad",
+          "c": "Se cuadriplica",
+          "d": "Queda igual"
+        },
+        "correctAnswer": "a"
+      },
+      {
+        "id": 114,
+        "question": "Desde la antena, en un receptor, ¿cuál es la etapa que antecede al amplificador de F.I.?",
+        "options": {
+          "a": "Amplificador de R.F",
+          "b": "Mezclador",
+          "c": "Detector",
+          "d": "Amplificador de AF"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 115,
+        "question": "Desde la antena, en un receptor, ¿cuál es la etapa que está inmediatamente después del detector?",
+        "options": {
+          "a": "Amplificador de R.F",
+          "b": "Amplificador de F.I",
+          "c": "Amplificador de audio",
+          "d": "Mezclador"
+        },
+        "correctAnswer": "c"
+      },
+      {
+        "id": 116,
+        "question": "Desde la antena, en un receptor, ¿cuál es la etapa que está inmediatamente antes de la etapa detectora?",
+        "options": {
+          "a": "Amplificador de R.F",
+          "b": "Amplificador de F.I",
+          "c": "Amplificador de AF",
+          "d": "Ninguna de las nombradas"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 117,
+        "question": "¿Cuál es la velocidad de las ondas electromagnéticas en el espacio libre?",
+        "options": {
+          "a": "3.000.000 Km./seg",
+          "b": "300.000 Km./seg",
+          "c": "300/Frecuencia (Mhz.)",
+          "d": "142,5/Frecuencia (MHz)"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 118,
+        "question": "Los coaxiles son líneas de transmisión:",
+        "options": {
+          "a": "Balanceadas",
+          "b": "Desbalanceadas",
+          "c": "De muy alta impedancia",
+          "d": "Para conectar en el punto de máxima tensión de la antena"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 119,
+        "question": "Las líneas abiertas son líneas de transmisión:",
+        "options": {
+          "a": "Balanceadas",
+          "b": "Desbalanceadas",
+          "c": "De muy baja impedancia",
+          "d": "Para conectar en el punto de máxima corriente de la antena"
+        },
+        "correctAnswer": "a"
+      },
+      {
+        "id": 120,
+        "question": "¿Cómo están formadas las ondas de radio?",
+        "options": {
+          "a": "Por campos eléctricos",
+          "b": "Por campos magnéticos",
+          "c": "Por campos eléctricos y magnéticos",
+          "d": "Por campos electroestáticos"
+        },
+        "correctAnswer": "c"
+      },
+      {
+        "id": 121,
+        "question": "Si la señal de una estación en VHF llega muy débil, al límite del umbral del Squelch, ¿qué señal le daría?",
+        "options": {
+          "a": "Busy",
+          "b": "S-1",
+          "c": "S-9",
+          "d": "S-5"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 122,
+        "question": "Los \"Handies\" bibanda utilizados por los radioaficionados, ¿en qué clase de emisión emiten?",
+        "options": {
+          "a": "F3E",
+          "b": "A3E",
+          "c": "J3E",
+          "d": "J2D"
+        },
+        "correctAnswer": "a"
+      },
+      {
+        "id": 123,
+        "question": "Si una estación en la banda de 80 metros llega con muy buena señal, ¿qué señal le daría?",
+        "options": {
+          "a": "S-3 + 9 dB",
+          "b": "S-9 + 20 dB",
+          "c": "S-20 + 9 dB",
+          "d": "S-3"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 124,
+        "question": "En el símbolo de la batería, la línea mas corta, ¿qué terminal indica?",
+        "options": {
+          "a": "Positivo",
+          "b": "Negativo",
+          "c": "Neutro",
+          "d": "Fase"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 125,
+        "question": "Se dispone de cuatro resistencias (R1= 50 Ω, R2= 10 Ω, R3= 120 Ω y R4= 4700 Ω) conectadas en paralelo a una fuente de alimentación de 12 Volts. ¿Qué corriente circulará por R2?",
+        "options": {
+          "a": "1200 mA",
+          "b": "120 mA",
+          "c": "12 mA",
+          "d": "1,2 mA"
+        },
+        "correctAnswer": "a"
+      },
+      {
+        "id": 126,
+        "question": "Se dispone de cuatro resistencias (R1= 50 Ω, R2= 10 Ω, R3= 120 Ω y R4= 4700 Ω) conectadas en paralelo a una fuente de alimentación de 12 Volts. ¿Qué corriente circulará por R1?",
+        "options": {
+          "a": "10 mA",
+          "b": "240 mA",
+          "c": "1000 mA",
+          "d": "24 mA"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 127,
+        "question": "¿En qué posición un dipolo de 80 m, transmite mas intensamente hacia un lado?",
+        "options": {
+          "a": "\"V\" invertida",
+          "b": "Inclinado",
+          "c": "Horizontal",
+          "d": "Vertical"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 128,
+        "question": "En un receptor, el amplificador de audio frecuencia:",
+        "options": {
+          "a": "Amplifica la señal modulada para enviarla a la antena",
+          "b": "Extrae el mensaje a partir de la señal demodulada",
+          "c": "Modifica la amplitud o la frecuencia de la portadora pura, conforme a la señal del mensaje",
+          "d": "Amplifica la señal demodulada"
+        },
+        "correctAnswer": "d"
+      },
+      {
+        "id": 129,
+        "question": "Se dispone de cuatro resistencias (R1= 50 Ω, R2= 10 Ω, R3= 120 Ω y R4= 4700 Ω) conectadas en paralelo a una fuente de alimentación de 12 Volts. ¿Qué corriente circulará por R4?",
+        "options": {
+          "a": "2,55 mA",
+          "b": "25,53 mA",
+          "c": "255,31 mA",
+          "d": "2,55 A"
+        },
+        "correctAnswer": "a"
+      },
+      {
+        "id": 130,
+        "question": "En un transceptor, por medio del comando RF GAIN:",
+        "options": {
+          "a": "Se controla la ganancia de la sección de radio frecuencia del transmisor",
+          "b": "Se controla la ganancia de la sección de radio frecuencia del receptor",
+          "c": "Se controla la ganancia de la sección de audio frecuencia del transmisor",
+          "d": "Se controla la ganancia de la sección de audio frecuencia del receptor"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 131,
+        "question": "Las líneas abiertas tienen:",
+        "options": {
+          "a": "Menor perdida que las líneas coaxiles",
+          "b": "Igual perdida que las líneas coaxiles",
+          "c": "Mayor pérdida que las líneas coaxiles",
+          "d": "Tiene el doble de pérdida que las líneas coaxiles"
+        },
+        "correctAnswer": "a"
+      },
+      {
+        "id": 132,
+        "question": "¿Cuál es la constante práctica que se utiliza para el cálculo de antenas dipolos de 1/2 longitud de onda según la formula Longitud = K/f (MHz)?",
+        "options": {
+          "a": "K=72",
+          "b": "K=132,5",
+          "c": "K=142,5",
+          "d": "K=300"
+        },
+        "correctAnswer": "c"
+      },
+      {
+        "id": 133,
+        "question": "En un transceptor, por medio del comando AF GAIN:",
+        "options": {
+          "a": "Se controla la ganancia de la sección de audio frecuencia del transmisor",
+          "b": "Se controla la ganancia de la sección de audio frecuencia del receptor",
+          "c": "Se controla la ganancia de la sección de radio frecuencia del transmisor",
+          "d": "Se controla la ganancia de la sección de radio frecuencia del receptor"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 134,
+        "question": "En un transceptor, por medio del comando SQUELCH:",
+        "options": {
+          "a": "Se atenúa el ruido de las estaciones que llegan con señales débiles",
+          "b": "Se atenúa el ruido de las estaciones que llegan con señales fuertes",
+          "c": "Se silencia el audio cuando a la entrada del receptor no se detecta señal en la frecuencia de trabajo",
+          "d": "Aumenta la ganancia del receptor para estaciones débiles y la disminuye para estaciones fuertes"
+        },
+        "correctAnswer": "c"
+      },
+      {
+        "id": 135,
+        "question": "En un transceptor, por medio del comando MODE:",
+        "options": {
+          "a": "Se selecciona los modo de operación AM, BLU (SSB), BLU (LSB), CW y FM",
+          "b": "Se selecciona la frecuencia de operación de acuerdo a las memorias programadas",
+          "c": "Se controla la amplitud de la portadora a transmitir en AM, BLU (SSB), BLU (LSB) y FM",
+          "d": "Se selecciona la banda de operación"
+        },
+        "correctAnswer": "a"
+      },
+      {
+        "id": 136,
+        "question": "¿A qué se llama amplificador lineal?",
+        "options": {
+          "a": "A la etapa que amplifica una fuente de alimentación",
+          "b": "A la etapa que amplifica la potencia de RF de un transmisor",
+          "c": "A la etapa que opera únicamente con componentes lineales",
+          "d": "A la etapa que multiplica \"n\" veces la tensión domiciliaria"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 137,
+        "question": "¿Qué simboliza la \"flecha\" en un transistor tipo PNP?",
+        "options": {
+          "a": "La flecha es el colector y apunta hacia adentro del círculo",
+          "b": "La flecha es la base y apunta hacia adentro del círculo",
+          "c": "La flecha es el emisor y apunta hacia adentro del círculo",
+          "d": "La flecha es el colector y apunta hacia fuera del círculo"
+        },
+        "correctAnswer": "c"
+      },
+      {
+        "id": 138,
+        "question": "¿Cuál es la longitud de onda correspondiente a una frecuencia de 50,050 MHz?",
+        "options": {
+          "a": "6,85 m",
+          "b": "5,99 m",
+          "c": "6,10 m",
+          "d": "7,98 m"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 139,
+        "question": "¿Cuál es la longitud de onda correspondiente a una frecuencia de 430,130 MHz?",
+        "options": {
+          "a": "0,662 m",
+          "b": "0,595 m",
+          "c": "0,697 m",
+          "d": "0,98 m"
+        },
+        "correctAnswer": "c"
+      },
+      {
+        "id": 140,
+        "question": "¿Cuál es el ángulo ideal entre las ramas de una antena dipolo horizontal de 1/2 longitud de onda para la banda de 80 metros?",
+        "options": {
+          "a": "45º",
+          "b": "90º",
+          "c": "135º",
+          "d": "180º"
+        },
+        "correctAnswer": "d"
+      },
+      {
+        "id": 141,
+        "question": "Si dos resistencias de igual valor están conectadas en paralelo. ¿Cuánto vale la resistencia total del circuito?",
+        "options": {
+          "a": "La suma de las dos",
+          "b": "La mitad de una de ellas",
+          "c": "Tres veces el valor de una de ellas",
+          "d": "La cuarta parte del producto de las dos"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 142,
+        "question": "Si dos resistencias de igual valor están conectadas en serie. ¿Cuánto vale la resistencia total del circuito?",
+        "options": {
+          "a": "La suma de las dos",
+          "b": "La mitad de una de ellas",
+          "c": "Tres veces el valor de una de ellas",
+          "d": "La cuarta parte del producto de las dos"
+        },
+        "correctAnswer": "a"
+      },
+      {
+        "id": 143,
+        "question": "Una señal de 725 hz., ¿a qué rango de frecuencia pertenece?",
+        "options": {
+          "a": "Radio frecuencia",
+          "b": "Audio frecuencia",
+          "c": "Alta frecuencia",
+          "d": "VHF"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 144,
+        "question": "Una antena dipolo plegado. ¿Qué impedancia presenta en su centro?",
+        "options": {
+          "a": "50 Ω",
+          "b": "75 Ω",
+          "c": "150 Ω",
+          "d": "300 Ω"
+        },
+        "correctAnswer": "d"
+      },
+      {
+        "id": 145,
+        "question": "El dial de un receptor esta calibrado en kilohertz y muestra la frecuencia de 7125 Khz. ¿Qué frecuencia mostraría si estuviera calibrado en Megahertz?",
+        "options": {
+          "a": "71,25 MHz",
+          "b": "7,125 MHz",
+          "c": ".007125 MHz",
+          "d": "712,5 MHz"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 146,
+        "question": "¿Cuál es el período en que se producen los máximos ciclos solares?",
+        "options": {
+          "a": "2 años",
+          "b": "11 años",
+          "c": "15 años",
+          "d": "5 años"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 147,
+        "question": "Según el código de colores de resistencias, ¿cuál sería la combinación correcta para 290 Ω?",
+        "options": {
+          "a": "Naranja, blanco, negro",
+          "b": "Rojo, blanco, marrón",
+          "c": "Rojo, gris, marrón",
+          "d": "Rojo, gris, negro"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 148,
+        "question": "¿Qué elemento de una válvula es el ánodo?",
+        "options": {
+          "a": "Filamento",
+          "b": "Placa",
+          "c": "Pantalla",
+          "d": "Drenaje"
+        },
+        "correctAnswer": "b"
+      },
+      {
+        "id": 149,
+        "question": "Se dispone de cuatro resistencias (R1= 50 Ω, R2= 10 Ω, R3= 120 Ω y R4= 4700 Ω) conectadas en paralelo a una fuente de alimentación de 12 Volts. ¿Cuál será la resistencia total (aproximada) del circuito?",
+        "options": {
+          "a": "7,77 K",
+          "b": "77,7 Ω",
+          "c": "7,77 Ω",
+          "d": "777 Ω"
+        },
+        "correctAnswer": "c"
+      },
+      {
+        "id": 150,
+        "question": "Según el código de colores para resistencias, ¿cuál sería la combinación correcta para 87 Ω?",
+        "options": {
+          "a": "Gris, azul, negro",
+          "b": "Blanco, azul, negro",
+          "c": "Blanco, verde, marrón",
+          "d": "Gris, violeta, negro"
+        },
+        "correctAnswer": "d"
+      }
+    ]
+  }
+}
